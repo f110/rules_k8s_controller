@@ -333,16 +333,6 @@ _informer_gen = go_rule(
         "clientpackage": attr.string(),
         "clientsetname": attr.string(default = _DEFAULT_CLIENTSET_NAME),
         "listerpackage": attr.string(),
-        "_informer_gen_v0_17_4": attr.label(
-            default = "//third_party/code-generator-v0.17.4/cmd/informer-gen",
-            executable = True,
-            cfg = "host",
-        ),
-        "_informer_gen_v0_18_8": attr.label(
-            default = "//third_party/code-generator-v0.18.8/cmd/informer-gen",
-            executable = True,
-            cfg = "host",
-        ),
     }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("informer-gen").items()),
 )
 
