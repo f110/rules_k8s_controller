@@ -131,7 +131,7 @@ def _flatten_deps(go_srcs):
 def _code_generator_attrs(name):
     attrs = {}
     for v in _VENDORED_CODE_GENERATOR_VERSIONS:
-        attrs["_" + name + "_" + v.replace(".", "_")] = attr.label(
+        attrs["_" + name.replace("-", "_") + "_" + v.replace(".", "_")] = attr.label(
             default = "//third_party/code-generator-v" + v + "/cmd/" + name,
             executable = True,
             cfg = "host",
