@@ -533,7 +533,7 @@ rbac_gen = rule(
         "rolename": attr.string(),
         "debug": attr.bool(default = False),
         "_template": attr.label(
-            default = "//go:controller-gen.bash",
+            default = "//k8s:controller-gen.bash",
             allow_single_file = True,
         ),
         "_bin": attr.label(
