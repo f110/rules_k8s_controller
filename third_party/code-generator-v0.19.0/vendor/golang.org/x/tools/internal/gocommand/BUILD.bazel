@@ -1,0 +1,16 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "gocommand",
+    srcs = [
+        "invoke.go",
+        "vendor.go",
+    ],
+    importmap = "k8s.io/code-generator/vendor/golang.org/x/tools/internal/gocommand",
+    importpath = "golang.org/x/tools/internal/gocommand",
+    visibility = ["//third_party/code-generator-v0.19.0/vendor/golang.org/x/tools:__subpackages__"],
+    deps = [
+        "//third_party/code-generator-v0.19.0/vendor/golang.org/x/mod/semver",
+        "//third_party/code-generator-v0.19.0/vendor/golang.org/x/tools/internal/event",
+    ],
+)
