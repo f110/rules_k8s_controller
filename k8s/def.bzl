@@ -129,14 +129,14 @@ def _flatten_deps(go_srcs):
     return deps
 
 def _code_generator_attrs(name):
-    attr = {}
+    attrs = {}
     for v in _VENDORED_CODE_GENERATOR_VERSIONS:
-        attr["_" + name + "_" + v.replace(".", "_")] = attr.label(
+        attrs["_" + name + "_" + v.replace(".", "_")] = attr.label(
             default = "//third_party/code-generator-v" + v + "/cmd/" + name,
             executable = True,
             cfg = "host",
         )
-    return attr
+    return attrs
 
 def _deepcopy_gen_impl(ctx):
     k8s_version = ""
