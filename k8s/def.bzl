@@ -178,7 +178,7 @@ _deepcopy_gen = go_rule(
         "outputname": attr.string(
             default = "zz_generated.deepcopy",
         ),
-    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("deepcopy-gen")),
+    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("deepcopy-gen").items()),
 )
 
 def _client_gen_impl(ctx):
