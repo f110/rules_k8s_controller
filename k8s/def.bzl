@@ -15,7 +15,7 @@ _COMMON_ATTRS = {
     "debug": attr.bool(default = False),
     "version": attr.string(default = "v0.17"),
     "_template": attr.label(
-        default = "@dev_f110_rules_extras//go:code-generator.bash",
+        default = "//k8s:code-generator.bash",
         allow_single_file = True,
     ),
     "_gazelle": attr.label(
@@ -406,7 +406,7 @@ _crd_gen = rule(
         "srcs": attr.label_list(),
         "debug": attr.bool(default = False),
         "_template": attr.label(
-            default = "//go:controller-gen.bash",
+            default = "//k8s:controller-gen.bash",
             allow_single_file = True,
         ),
         "_bin": attr.label(
