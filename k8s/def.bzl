@@ -132,7 +132,7 @@ def _code_generator_attrs(name):
     attrs = {}
     for v in _VENDORED_CODE_GENERATOR_VERSIONS:
         attrs["_" + name.replace("-", "_") + "_" + v.replace(".", "_")] = attr.label(
-            default = "//third_party/code-generator-v" + v + "/cmd/" + name,
+            default = "//third_party/code-generator-" + v + "/cmd/" + name,
             executable = True,
             cfg = "host",
         )
