@@ -1,0 +1,9 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "typesinternal",
+    srcs = ["types.go"],
+    importmap = "sigs.k8s.io/controller-tools/vendor/golang.org/x/tools/internal/typesinternal",
+    importpath = "golang.org/x/tools/internal/typesinternal",
+    visibility = ["//third_party/controller-tools-v0.4.0/vendor/golang.org/x/tools:__subpackages__"],
+)

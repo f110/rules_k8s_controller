@@ -1,0 +1,17 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "modfile",
+    srcs = [
+        "print.go",
+        "read.go",
+        "rule.go",
+    ],
+    importmap = "sigs.k8s.io/controller-tools/vendor/golang.org/x/mod/modfile",
+    importpath = "golang.org/x/mod/modfile",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/controller-tools-v0.4.0/vendor/golang.org/x/mod/internal/lazyregexp",
+        "//third_party/controller-tools-v0.4.0/vendor/golang.org/x/mod/module",
+    ],
+)

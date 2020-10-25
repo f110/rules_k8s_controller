@@ -1,0 +1,23 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "webhook",
+    srcs = [
+        "conv.go",
+        "parser.go",
+        "zz_generated.markerhelp.go",
+    ],
+    importpath = "sigs.k8s.io/controller-tools/pkg/webhook",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/controller-tools-v0.4.0/pkg/genall",
+        "//third_party/controller-tools-v0.4.0/pkg/markers",
+        "//third_party/controller-tools-v0.4.0/vendor/k8s.io/api/admissionregistration/v1:admissionregistration",
+        "//third_party/controller-tools-v0.4.0/vendor/k8s.io/api/admissionregistration/v1beta1",
+        "//third_party/controller-tools-v0.4.0/vendor/k8s.io/apimachinery/pkg/apis/meta/v1:meta",
+        "//third_party/controller-tools-v0.4.0/vendor/k8s.io/apimachinery/pkg/runtime",
+        "//third_party/controller-tools-v0.4.0/vendor/k8s.io/apimachinery/pkg/runtime/schema",
+        "//third_party/controller-tools-v0.4.0/vendor/k8s.io/apimachinery/pkg/util/runtime",
+        "//third_party/controller-tools-v0.4.0/vendor/k8s.io/apimachinery/pkg/util/sets",
+    ],
+)
