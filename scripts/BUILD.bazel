@@ -2,3 +2,8 @@ sh_binary(
     name = "import-controller-tools",
     srcs = ["import-controller-tools.sh"],
 )
+
+sh_binary(
+    name = "import-code-generator",
+    srcs = ["import-code-generator.sh"],
+)

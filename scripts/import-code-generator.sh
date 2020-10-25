@@ -4,7 +4,7 @@ set -e
 NAME="code-generator"
 VERSION="v0.19.0"
 
-TOPDIR=$(cd $(dirname "${0}")/..; pwd)
+TOPDIR=$BUILD_WORKSPACE_DIRECTORY
 TARGETDIR="${TOPDIR}/third_party/${NAME}-${VERSION}"
 
 if [ -d "${TARGETDIR}" ]; then
