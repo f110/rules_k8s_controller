@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-set -e
+set -ex
 
 NAME="controller-tools"
-VERSION="v0.2.4"
+VERSION="v0.2.9"
 
-TOPDIR=$(cd $(dirname "${0}")/..; pwd)
+TOPDIR=$BUILD_WORKSPACE_DIRECTORY
 TARGETDIR="${TOPDIR}/third_party/${NAME}-${VERSION}"
 
 if [ -d "${TARGETDIR}" ]; then
