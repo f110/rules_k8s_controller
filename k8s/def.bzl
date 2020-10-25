@@ -30,6 +30,17 @@ _DEFAULT_K8S_PATCH_VERSION = {
     "v0.18": "v0.18.8",
     "v0.19": "v0.19.0",
 }
+_VENDORED_CONTROLLER_TOOLS_VERSIONS = ["v0.2.4", "v0.2.9", "v0.4.0"]
+
+def _controller_tools_bin_attrs():
+    attrs = {}
+    for v in _VENDORED_CONTROLLER_TOOLS_VERSIONS:
+        attrs["_bin_"+v.replace(".", "_")] = attr.label(
+            default = "//third_party/controller-tools-"+v+"/cmd/controller-gen",
+            executable = True,
+            cfg = "host",
+        )
+    return attrs
 
 def _code_generator_impl(ctx, _bin, srcs, args, target_dirs = [], generated_dirs = [], filename = "", dep_runfiles = [], providers = []):
     go = go_context(ctx)
@@ -373,9 +384,10 @@ def _crd_gen_impl(ctx):
     if ctx.attr.debug:
         debug = "true"
 
+    bin = getattr(ctx.executable, "_bin_"+ctx.attr.controller_tools_version.replace(".", "_"))
     substitutions = {
         "@@DEBUG@@": debug,
-        "@@BIN@@": shell.quote(ctx.executable._bin.short_path),
+        "@@BIN@@": shell.quote(bin.short_path),
         "@@GENERATED_DIR@@": shell.quote("crd"),
         "@@OUTPUT_DIR@@": shell.quote(ctx.attr.dir),
         "@@ARGS@@": shell.array_literal(args),
@@ -390,7 +402,7 @@ def _crd_gen_impl(ctx):
         substitutions = substitutions,
         is_executable = True,
     )
-    runfiles = ctx.runfiles(files = [ctx.executable._bin] + srcs, transitive_files = depset(dep_files))
+    runfiles = ctx.runfiles(files = [bin] + srcs, transitive_files = depset(dep_files))
     return [
         DefaultInfo(
             runfiles = runfiles,
@@ -401,10 +413,11 @@ def _crd_gen_impl(ctx):
 _crd_gen = rule(
     implementation = _crd_gen_impl,
     executable = True,
-    attrs = {
+    attrs = dict({
         "dir": attr.string(),
         "srcs": attr.label_list(),
         "debug": attr.bool(default = False),
+        "controller_tools_version": attr.string(default = "v0.2.9"),
         "_template": attr.label(
             default = "//k8s:controller-gen.bash",
             allow_single_file = True,
@@ -414,7 +427,7 @@ _crd_gen = rule(
             executable = True,
             cfg = "host",
         ),
-    },
+    }.items() + _controller_tools_bin_attrs().items()),
 )
 
 def k8s_code_generator(name, **kwargs):
@@ -499,9 +512,10 @@ def _rbac_gen_impl(ctx):
     if ctx.attr.debug:
         debug = "true"
 
+    bin = getattr(ctx.executable, "_bin_"+ctx.attr.controller_tools_version.replace(".", "_"))
     substitutions = {
         "@@DEBUG@@": debug,
-        "@@BIN@@": shell.quote(ctx.executable._bin.short_path),
+        "@@BIN@@": shell.quote(bin.short_path),
         "@@GENERATED_DIR@@": shell.quote("rbac"),
         "@@OUTPUT_DIR@@": shell.quote(ctx.attr.dir),
         "@@ARGS@@": shell.array_literal(args),
@@ -516,7 +530,7 @@ def _rbac_gen_impl(ctx):
         substitutions = substitutions,
         is_executable = True,
     )
-    runfiles = ctx.runfiles(files = [ctx.executable._bin] + srcs, transitive_files = depset(dep_files))
+    runfiles = ctx.runfiles(files = [bin] + srcs, transitive_files = depset(dep_files))
     return [
         DefaultInfo(
             runfiles = runfiles,
@@ -527,19 +541,15 @@ def _rbac_gen_impl(ctx):
 rbac_gen = rule(
     implementation = _rbac_gen_impl,
     executable = True,
-    attrs = {
+    attrs = dict({
         "dir": attr.string(),
         "srcs": attr.label_list(),
         "rolename": attr.string(),
         "debug": attr.bool(default = False),
+        "controller_tools_version": attr.string(default = "v0.2.9"),
         "_template": attr.label(
             default = "//k8s:controller-gen.bash",
             allow_single_file = True,
         ),
-        "_bin": attr.label(
-            default = "//third_party/controller-tools-v0.2.9/cmd/controller-gen",
-            executable = True,
-            cfg = "host",
-        ),
-    },
+    }.items() + _controller_tools_bin_attrs().items()),
 )
