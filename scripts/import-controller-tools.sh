@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-set -ex
+set -e
 
 NAME="controller-tools"
-VERSION="v0.2.9"
+VERSION="v0.4.0"
 
 TOPDIR=$BUILD_WORKSPACE_DIRECTORY
 TARGETDIR="${TOPDIR}/third_party/${NAME}-${VERSION}"
