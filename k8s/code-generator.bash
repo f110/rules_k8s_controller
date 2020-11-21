@@ -24,14 +24,14 @@ rm -rf src
 mkdir -p src
 
 if [ -n "$(ls vendor 2> /dev/null)" ]; then
-  for f in vendor/*; do
-    ln -sf $RUNFILE_DIR/$f $RUNFILE_DIR/src
-  done
+    for f in vendor/*; do
+        ln -sf $RUNFILE_DIR/$f $RUNFILE_DIR/src
+    done
 fi
 
 for i in "${!SRC_PACKAGE_DIRS[@]}"; do
-  mkdir -p src/$(dirname ${SRC_PACKAGE_DIRS[$i]})
-  ln -sf $RUNFILE_DIR/${SRC_DIRS[$i]} src/${SRC_PACKAGE_DIRS[$i]}
+    mkdir -p src/$(dirname ${SRC_PACKAGE_DIRS[$i]})
+    ln -sf $RUNFILE_DIR/${SRC_DIRS[$i]} src/${SRC_PACKAGE_DIRS[$i]}
 done
 
 unset GO111MODULE
@@ -42,16 +42,22 @@ export GOPATH=$RUNFILE_DIR
 cd "$BUILD_WORKSPACE_DIRECTORY"
 
 if [ -n "$FILENAME" ]; then
-  for i in "${!GENERATED_DIRS[@]}"; do
-    mkdir -p "${TARGET_DIRS[$i]}"
-    cp "$RUNFILE_DIR/${GENERATED_DIRS[$i]}/$FILENAME" "${TARGET_DIRS[$i]}"
-  done
+    for i in "${!GENERATED_DIRS[@]}"; do
+        if [ -f "$RUNFILE_DIR/${GENERATED_DIRS[$i]}/$FILENAME" ]; then
+            mkdir -p "${TARGET_DIRS[$i]}"
+            cp "$RUNFILE_DIR/${GENERATED_DIRS[$i]}/$FILENAME" "${TARGET_DIRS[$i]}"
+        else
+            if [ "@@DEBUG@@" = "true" ]; then
+                echo "Skip to copy $RUNFILE_DIR/${GENERATED_DIRS[$i]/$FILENAME} because it is not exists"
+            fi
+        fi
+    done
 else
-  mkdir -p $(dirname "${TARGET_DIRS[0]}")
-  rsync -r $RUNFILE_DIR/${GENERATED_DIRS[0]}/ ${TARGET_DIRS[0]}/
+    mkdir -p $(dirname "${TARGET_DIRS[0]}")
+    rsync -r $RUNFILE_DIR/${GENERATED_DIRS[0]}/ ${TARGET_DIRS[0]}/
 
-  if [ "$NO_GAZELLE" = "false" ]; then
-    "$GAZELLE" update "${TARGET_DIRS[0]}"
-  fi
+    if [ "$NO_GAZELLE" = "false" ]; then
+        "$GAZELLE" update "${TARGET_DIRS[0]}"
+    fi
 fi
 

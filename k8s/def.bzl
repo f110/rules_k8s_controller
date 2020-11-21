@@ -192,6 +192,46 @@ _deepcopy_gen = go_rule(
     }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("deepcopy-gen").items()),
 )
 
+def _register_gen_impl(ctx):
+    k8s_version = ""
+    if ctx.attr.version in _DEFAULT_K8S_PATCH_VERSION:
+        k8s_version = _DEFAULT_K8S_PATCH_VERSION[ctx.attr.version].replace(".", "_")
+    elif hasattr(ctx.executable, "_register_gen_" + ctx.attr.version.replace(".", "_")):
+        k8s_version = ctx.attr.version.replace(".", "_")
+    else:
+        fail("%s is not supported" % ctx.attr.version)
+
+    out = ctx.actions.declare_file(ctx.label.name + ".sh")
+
+    go_srcs = ctx.attr.srcs
+    srcs, providers = _extract_src_and_providers(go_srcs)
+    dep_runfiles = _flatten_deps(go_srcs)
+
+    args = []
+    args.append("--input-dirs=%s" % ",".join(_input_dir_args(providers)))
+    args.append("--go-header-file=%s" % ctx.file.header.path)
+    args.append("--output-file-base=%s" % ctx.attr.outputname)
+
+    return _code_generator_impl(
+        ctx,
+        getattr(ctx.executable, "_register_gen_" + k8s_version),
+        srcs,
+        args,
+        filename = ctx.attr.outputname + ".go",
+        target_dirs = [v[GoSource].srcs[0].dirname for v in providers],
+        generated_dirs = [v[GoLibrary].importpath for v in providers],
+        dep_runfiles = dep_runfiles,
+        providers = providers,
+    )
+
+_register_gen = go_rule(
+    implementation = _register_gen_impl,
+    executable = True,
+    attrs = dict({
+        "outputname": attr.string(default = "zz_generated.register"),
+    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("register-gen").items()),
+)
+
 def _client_gen_impl(ctx):
     k8s_version = ""
     if ctx.attr.version in _DEFAULT_K8S_PATCH_VERSION:
@@ -435,12 +475,14 @@ def k8s_code_generator(name, **kwargs):
         kwargs["dir"] = native.package_name()
 
     deepcopy_args = {}
+    register_args = {}
     client_args = {}
     lister_args = {}
     informer_args = {}
     for k in _COMMON_ATTRS.keys():
         if k in kwargs:
             deepcopy_args[k] = kwargs[k]
+            register_args[k] = kwargs[k]
             client_args[k] = kwargs[k]
             lister_args[k] = kwargs[k]
             informer_args[k] = kwargs[k]
@@ -448,6 +490,7 @@ def k8s_code_generator(name, **kwargs):
     for k in ["outputname"]:
         if k in kwargs:
             deepcopy_args[k] = kwargs[k]
+            register_args[k] = kwargs[k]
 
     for k in ["clientpackage", "clientsetname"]:
         if k in kwargs:
@@ -470,6 +513,7 @@ def k8s_code_generator(name, **kwargs):
     _client_gen(name = name + ".client", **client_args)
     _lister_gen(name = name + ".lister", **lister_args)
     _informer_gen(name = name + ".informer", **informer_args)
+    _register_gen(name = name + ".register", **register_args)
     _crd_gen(name = name + ".crd", **crd_args)
 
 def _rbac_gen_impl(ctx):
