@@ -8,6 +8,7 @@ _DEFAULT_CLIENTSET_NAME = "versioned"
 _COMMON_ATTRS = {
     "dir": attr.string(),
     "srcs": attr.label_list(),
+    "embed": attr.label_list(),
     "header": attr.label(
         allow_single_file = True,
     ),
@@ -161,7 +162,9 @@ def _deepcopy_gen_impl(ctx):
     out = ctx.actions.declare_file(ctx.label.name + ".sh")
 
     go_srcs = ctx.attr.srcs
-    srcs, providers = _extract_src_and_providers(go_srcs)
+    srcs, srcs_providers = _extract_src_and_providers(go_srcs)
+    embed_srcs, embed_providers = _extract_src_and_providers(ctx.attr.embed)
+    providers = srcs_providers + embed_providers
     dep_runfiles = _flatten_deps(go_srcs)
 
     args = []
@@ -177,7 +180,7 @@ def _deepcopy_gen_impl(ctx):
         args,
         filename = ctx.attr.outputname + ".go",
         target_dirs = [v[GoSource].srcs[0].dirname for v in providers],
-        generated_dirs = [v[GoLibrary].importpath for v in providers],
+        generated_dirs = [v[GoLibrary].importpath for v in srcs_providers],
         dep_runfiles = dep_runfiles,
         providers = providers,
     )
@@ -242,7 +245,10 @@ def _client_gen_impl(ctx):
         fail("%s is not supported" % ctx.attr.version)
 
     go_srcs = ctx.attr.srcs
-    srcs, providers = _extract_src_and_providers(go_srcs)
+    srcs, srcs_providers = _extract_src_and_providers(go_srcs)
+    embed_srcs, embed_providers = _extract_src_and_providers(ctx.attr.embed)
+    srcs += embed_srcs
+    providers = srcs_providers + embed_providers
     dep_runfiles = _flatten_deps(go_srcs)
 
     module_name = ""
@@ -345,6 +351,9 @@ def _informer_gen_impl(ctx):
 
     go_srcs = ctx.attr.srcs
     srcs, providers = _extract_src_and_providers(go_srcs)
+    embed_srcs, embed_providers = _extract_src_and_providers(ctx.attr.embed)
+    srcs += embed_srcs
+    providers += embed_providers
     dep_runfiles = _flatten_deps(go_srcs)
 
     module_name = ""
