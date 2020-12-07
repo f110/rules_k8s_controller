@@ -1,7 +1,7 @@
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@bazel_skylib//lib:collections.bzl", "collections")
-load("@io_bazel_rules_go//go:def.bzl", "go_context", "go_rule")
+load("@io_bazel_rules_go//go:def.bzl", "go_context")
 load("@io_bazel_rules_go//go/private:providers.bzl", "GoLibrary", "GoSource")
 
 _DEFAULT_CLIENTSET_NAME = "versioned"
@@ -23,6 +23,11 @@ _COMMON_ATTRS = {
         default = "@bazel_gazelle//cmd/gazelle",
         executable = True,
         cfg = "host",
+    ),
+}
+_GO_RULE_ATTRS = {
+    "_go_context_data": attr.label(
+        default = "@io_bazel_rules_go//:go_context_data",
     ),
 }
 _VENDORED_CODE_GENERATOR_VERSIONS = ["v0.19.0", "v0.18.8", "v0.17.11"]
@@ -185,14 +190,15 @@ def _deepcopy_gen_impl(ctx):
         providers = providers,
     )
 
-_deepcopy_gen = go_rule(
+_deepcopy_gen = rule(
     implementation = _deepcopy_gen_impl,
     executable = True,
     attrs = dict({
         "outputname": attr.string(
             default = "zz_generated.deepcopy",
         ),
-    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("deepcopy-gen").items()),
+    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("deepcopy-gen").items() + _GO_RULE_ATTRS.items()),
+    toolchains = ["@io_bazel_rules_go//go:toolchain"],
 )
 
 def _register_gen_impl(ctx):
@@ -227,12 +233,13 @@ def _register_gen_impl(ctx):
         providers = providers,
     )
 
-_register_gen = go_rule(
+_register_gen = rule(
     implementation = _register_gen_impl,
     executable = True,
     attrs = dict({
         "outputname": attr.string(default = "zz_generated.register"),
-    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("register-gen").items()),
+    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("register-gen").items() + _GO_RULE_ATTRS.items()),
+    toolchains = ["@io_bazel_rules_go//go:toolchain"],
 )
 
 def _client_gen_impl(ctx):
@@ -281,7 +288,7 @@ def _client_gen_impl(ctx):
         providers = providers,
     )
 
-_client_gen = go_rule(
+_client_gen = rule(
     implementation = _client_gen_impl,
     executable = True,
     attrs = dict({
@@ -289,7 +296,8 @@ _client_gen = go_rule(
             default = _DEFAULT_CLIENTSET_NAME,
         ),
         "clientpackage": attr.string(),
-    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("client-gen").items()),
+    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("client-gen").items() + _GO_RULE_ATTRS.items()),
+    toolchains = ["@io_bazel_rules_go//go:toolchain"],
 )
 
 def _lister_gen_impl(ctx):
@@ -332,12 +340,13 @@ def _lister_gen_impl(ctx):
         providers = providers,
     )
 
-_lister_gen = go_rule(
+_lister_gen = rule(
     implementation = _lister_gen_impl,
     executable = True,
     attrs = dict({
         "listerpackage": attr.string(),
-    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("lister-gen").items()),
+    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("lister-gen").items() + _GO_RULE_ATTRS.items()),
+    toolchains = ["@io_bazel_rules_go//go:toolchain"],
 )
 
 def _informer_gen_impl(ctx):
@@ -385,7 +394,7 @@ def _informer_gen_impl(ctx):
         providers = providers,
     )
 
-_informer_gen = go_rule(
+_informer_gen = rule(
     implementation = _informer_gen_impl,
     executable = True,
     attrs = dict({
@@ -393,7 +402,8 @@ _informer_gen = go_rule(
         "clientpackage": attr.string(),
         "clientsetname": attr.string(default = _DEFAULT_CLIENTSET_NAME),
         "listerpackage": attr.string(),
-    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("informer-gen").items()),
+    }.items() + _COMMON_ATTRS.items() + _code_generator_attrs("informer-gen").items() + _GO_RULE_ATTRS.items()),
+    toolchains = ["@io_bazel_rules_go//go:toolchain"],
 )
 
 def _crd_gen_impl(ctx):
