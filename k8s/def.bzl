@@ -473,7 +473,7 @@ _crd_gen = rule(
     implementation = _crd_gen_impl,
     executable = True,
     attrs = dict({
-        "dir": attr.string(),
+        "dir":   attr.string(),
         "srcs": attr.label_list(),
         "debug": attr.bool(default = False),
         "controller_tools_version": attr.string(default = "v0.2.9"),
@@ -489,27 +489,44 @@ _crd_gen = rule(
     }.items() + _controller_tools_bin_attrs().items()),
 )
 
-def k8s_code_generator(name, **kwargs):
+def k8s_api_generator(name, **kwargs):
     if not "dir" in kwargs:
         kwargs["dir"] = native.package_name()
 
     deepcopy_args = {}
     register_args = {}
-    client_args = {}
-    lister_args = {}
-    informer_args = {}
     for k in _COMMON_ATTRS.keys():
         if k in kwargs:
             deepcopy_args[k] = kwargs[k]
             register_args[k] = kwargs[k]
-            client_args[k] = kwargs[k]
-            lister_args[k] = kwargs[k]
-            informer_args[k] = kwargs[k]
 
     for k in ["outputname"]:
         if k in kwargs:
             deepcopy_args[k] = kwargs[k]
             register_args[k] = kwargs[k]
+
+    crd_args = {
+        "dir": kwargs["crd"],
+        "srcs": kwargs["srcs"],
+    }
+
+    _deepcopy_gen(name = name + ".deepcopy", **deepcopy_args)
+    _register_gen(name = name + ".register", **register_args)
+    if "crd" in kwargs:
+        _crd_gen(name = name + ".crd", **crd_args)
+
+def k8s_client_generator(name, **kwargs):
+    if not "dir" in kwargs:
+        kwargs["dir"] = native.package_name()
+
+    client_args = {}
+    lister_args = {}
+    informer_args = {}
+    for k in _COMMON_ATTRS.keys():
+        if k in kwargs:
+            client_args[k] = kwargs[k]
+            lister_args[k] = kwargs[k]
+            informer_args[k] = kwargs[k]
 
     for k in ["clientpackage", "clientsetname"]:
         if k in kwargs:
@@ -523,17 +540,12 @@ def k8s_code_generator(name, **kwargs):
         if k in kwargs:
             informer_args[k] = kwargs[k]
 
-    crd_args = {
-        "dir": kwargs["crd"],
-        "srcs": kwargs["srcs"],
-    }
-
-    _deepcopy_gen(name = name + ".deepcopy", **deepcopy_args)
-    _client_gen(name = name + ".client", **client_args)
-    _lister_gen(name = name + ".lister", **lister_args)
-    _informer_gen(name = name + ".informer", **informer_args)
-    _register_gen(name = name + ".register", **register_args)
-    _crd_gen(name = name + ".crd", **crd_args)
+    if "clientpackage" in kwargs:
+        _client_gen(name = name + ".client", **client_args)
+    if "listerpackage" in kwargs:
+        _lister_gen(name = name + ".lister", **lister_args)
+    if "listerpackage" in kwargs:
+        _informer_gen(name = name + ".informer", **informer_args)
 
 def _rbac_gen_impl(ctx):
     go_srcs = ctx.attr.srcs
