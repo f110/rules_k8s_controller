@@ -43,8 +43,8 @@ _go_vendor = rule(
         "_go_context_data": attr.label(
             default = "@io_bazel_rules_go//:go_context_data",
         ),
-        toolchains = ["@io_bazel_rules_go//go:toolchain"],
     },
+    toolchains = ["@io_bazel_rules_go//go:toolchain"],
 )
 
 def go_vendor(name, **kwargs):
