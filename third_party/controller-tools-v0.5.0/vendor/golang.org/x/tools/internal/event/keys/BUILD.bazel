@@ -1,0 +1,13 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "keys",
+    srcs = [
+        "keys.go",
+        "standard.go",
+    ],
+    importmap = "sigs.k8s.io/controller-tools/vendor/golang.org/x/tools/internal/event/keys",
+    importpath = "golang.org/x/tools/internal/event/keys",
+    visibility = ["//third_party/controller-tools-v0.5.0/vendor/golang.org/x/tools:__subpackages__"],
+    deps = ["//third_party/controller-tools-v0.5.0/vendor/golang.org/x/tools/internal/event/label"],
+)

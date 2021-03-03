@@ -1,0 +1,24 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "packagestest",
+    srcs = [
+        "expect.go",
+        "export.go",
+        "gopath.go",
+        "modules.go",
+        "modules_111.go",
+    ],
+    importmap = "sigs.k8s.io/controller-tools/vendor/golang.org/x/tools/go/packages/packagestest",
+    importpath = "golang.org/x/tools/go/packages/packagestest",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/controller-tools-v0.5.0/vendor/golang.org/x/tools/go/expect",
+        "//third_party/controller-tools-v0.5.0/vendor/golang.org/x/tools/go/packages",
+        "//third_party/controller-tools-v0.5.0/vendor/golang.org/x/tools/internal/gocommand",
+        "//third_party/controller-tools-v0.5.0/vendor/golang.org/x/tools/internal/packagesinternal",
+        "//third_party/controller-tools-v0.5.0/vendor/golang.org/x/tools/internal/proxydir",
+        "//third_party/controller-tools-v0.5.0/vendor/golang.org/x/tools/internal/span",
+        "//third_party/controller-tools-v0.5.0/vendor/golang.org/x/tools/internal/testenv",
+    ],
+)
