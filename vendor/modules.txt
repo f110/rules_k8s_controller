@@ -1,3 +1,6 @@
+# github.com/Masterminds/semver/v3 v3.1.1
+## explicit
+github.com/Masterminds/semver/v3
 # github.com/bazelbuild/buildtools v0.0.0-20210227132407-f2aed9ee205d
 ## explicit
 github.com/bazelbuild/buildtools/build
@@ -10,9 +13,6 @@ github.com/google/go-querystring/query
 # github.com/spf13/pflag v1.0.5
 ## explicit
 github.com/spf13/pflag
-# go.starlark.net v0.0.0-20210223155950-e043a3d3c984
-## explicit
-go.starlark.net/syntax
 # golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
 golang.org/x/crypto/cast5
 golang.org/x/crypto/openpgp
