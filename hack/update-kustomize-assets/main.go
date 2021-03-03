@@ -16,6 +16,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/bazelbuild/buildtools/build"
 	"github.com/google/go-github/v33/github"
 	"github.com/spf13/pflag"
@@ -163,7 +164,9 @@ func updateKustomizeAssets(args []string) error {
 		}
 		dict.List = append(dict.List, releaseToKeyValueExpr(rel))
 		sort.Slice(dict.List, func(i, j int) bool {
-			return dict.List[i].Key.(*build.StringExpr).Value < dict.List[j].Key.(*build.StringExpr).Value
+			left := semver.MustParse(dict.List[i].Key.(*build.StringExpr).Value)
+			right := semver.MustParse(dict.List[j].Key.(*build.StringExpr).Value)
+			return left.LessThan(right)
 		})
 	}
 	out := build.FormatString(f)
