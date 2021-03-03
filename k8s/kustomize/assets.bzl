@@ -9,42 +9,14 @@ KUSTOMIZE_ASSETS = {
             "db8a283c7edfc10c0e661b31916f4e60096eae558657730177e4f103c84ddc00",
         ),
     },
-    "3.9.1": {
-        "linux": (
-            "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.9.1/kustomize_v3.9.1_linux_amd64.tar.gz",
-            "0fb2c3299ca3668205eac3a3a5be9a8e4a79d7c4fba18542a6c444e0d33ddbdd",
-        ),
-        "darwin": (
-            "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.9.1/kustomize_v3.9.1_darwin_amd64.tar.gz",
-            "a15ced11ef9e26061c9f9204f3dec1e15e96e566cc99f443a45a1eeb638f5ce7",
-        ),
-    },
-    "v3.9.2": {
-        "darwin": (
-            "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.2/kustomize_v3.9.2_darwin_amd64.tar.gz",
-            "6d01be3adee9cb0b118988ddd4879fcae575baa0b6210836c1d0aa83c9199678",
-        ),
-        "linux": (
-            "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.2/kustomize_v3.9.2_linux_amd64.tar.gz",
-            "f5c76a726cbd27b74587fcd2816e86b3f6279d84043b7ed3725bf48b1bc8ca4a",
-        ),
-        "windows": (
-            "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.2/kustomize_v3.9.2_windows_amd64.tar.gz",
-            "f2de820ff6c00d5e93141bd887c577b962e249cf395466d304b7bff1f8bb5860",
-        ),
-    },
-    "v3.10.0": {
-        "darwin": (
-            "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.10.0/kustomize_v3.10.0_darwin_amd64.tar.gz",
-            "8fc809455a282f1c9a8574304f61dcaf1f709012739cbddf5d122b1e953588b3",
-        ),
-        "linux": (
-            "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.10.0/kustomize_v3.10.0_linux_amd64.tar.gz",
-            "bab4ab8881718c29ba174bdf677fd89986ad25c40eb363fec9e78c1aff2ff0ea",
-        ),
-        "windows": (
-            "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.10.0/kustomize_v3.10.0_windows_amd64.tar.gz",
-            "aa1db87c2ef85bb4780e96299873a6b7960385f1599a2193dbd449e90a58c20d",
-        ),
-    },
+    "v3.9.1": {"darwin": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.1/kustomize_v3.9.1_darwin_amd64.tar.gz", "a15ced11ef9e26061c9f9204f3dec1e15e96e566cc99f443a45a1eeb638f5ce7"), "linux": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.1/kustomize_v3.9.1_linux_amd64.tar.gz", "0fb2c3299ca3668205eac3a3a5be9a8e4a79d7c4fba18542a6c444e0d33ddbdd"), "windows": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.1/kustomize_v3.9.1_windows_amd64.tar.gz", "35adf766750ac2f9fe15128218cfe53f59d3e984ab04ed2555a875496368e00b")},
+    "v3.9.2": {"darwin": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.2/kustomize_v3.9.2_darwin_amd64.tar.gz", "6d01be3adee9cb0b118988ddd4879fcae575baa0b6210836c1d0aa83c9199678"), "linux": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.2/kustomize_v3.9.2_linux_amd64.tar.gz", "f5c76a726cbd27b74587fcd2816e86b3f6279d84043b7ed3725bf48b1bc8ca4a"), "windows": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.2/kustomize_v3.9.2_windows_amd64.tar.gz", "f2de820ff6c00d5e93141bd887c577b962e249cf395466d304b7bff1f8bb5860")},
+    "v3.9.3": {"darwin": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.3/kustomize_v3.9.3_darwin_amd64.tar.gz", "5909b9515339d6fcb5f1d6ddd406ab5c6cef697425a6abbc9ad4659d585fa4d7"), "linux": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.3/kustomize_v3.9.3_linux_amd64.tar.gz", "16b42caddcde36cfeaffbd459bedc0349e66f52e7afa12083d4630b1358f0aa5"), "windows": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.3/kustomize_v3.9.3_windows_amd64.tar.gz", "42f9837c72f010461688a61217f885474bf5c439a64f83db8898d62ab3f9c478")},
+    "v3.9.4": {"darwin": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.4/kustomize_v3.9.4_darwin_amd64.tar.gz", "d7579f24a7ccc3bcadf13ff0578bd2f6dedfcbe12699914c1331ac2993b11904"), "linux": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.4/kustomize_v3.9.4_linux_amd64.tar.gz", "439c6bda9086399477e4f847b16b9b45ee695391b4f5d6e4107374ad149050b0"), "windows": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.9.4/kustomize_v3.9.4_windows_amd64.tar.gz", "8b0fc48843ee66b4ca8115f07fa92d536d773c04a76567176cb5e5e83f5cadf5")},
+    "v3.10.0": {"darwin": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.10.0/kustomize_v3.10.0_darwin_amd64.tar.gz", "8fc809455a282f1c9a8574304f61dcaf1f709012739cbddf5d122b1e953588b3"), "linux": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.10.0/kustomize_v3.10.0_linux_amd64.tar.gz", "bab4ab8881718c29ba174bdf677fd89986ad25c40eb363fec9e78c1aff2ff0ea"), "windows": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.10.0/kustomize_v3.10.0_windows_amd64.tar.gz", "aa1db87c2ef85bb4780e96299873a6b7960385f1599a2193dbd449e90a58c20d")},
+    "v4.0.0": {"darwin": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.0/kustomize_v4.0.0_darwin_amd64.tar.gz", "334985ae01bdbac329005207f57400db04394b846eb29f75a223c57541bd6b5b"), "linux": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.0/kustomize_v4.0.0_linux_amd64.tar.gz", "6d8da061bbd9e7c57b2f39f34ef5f4cce76321e94bfe6cae4e972a7483f3bf30"), "windows": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.0/kustomize_v4.0.0_windows_amd64.tar.gz", "b7494313d0b45ab57d2bb4a26c44c18180565e30661dcf53b78314fac761db5b")},
+    "v4.0.1": {"darwin": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.1/kustomize_v4.0.1_darwin_amd64.tar.gz", "0d72f74369d91acda33b08a3c979b1f2fc5f76f603c1e04545bbef84d39e1858"), "linux": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.1/kustomize_v4.0.1_linux_amd64.tar.gz", "914c006a4c00e92e09c050e5be594ef1270d47ea41b84dd7bdcab6b3b05b9297"), "windows": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.1/kustomize_v4.0.1_windows_amd64.tar.gz", "2a6793b6809bb99e4e9c93914c62233d018ec170acbf2ec086d87091f7f0cbff")},
+    "v4.0.2": {"darwin": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.2/kustomize_v4.0.2_darwin_amd64.tar.gz", "3f0b46728a16d844439de36f9766d8b1eb8dda37503d3eff1f0c3eb5160b0feb"), "linux": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.2/kustomize_v4.0.2_linux_amd64.tar.gz", "94f31d5c1d1b4bc025a920f7460c3ad2e2b41b8bc21e101aa918c8820f523f27"), "windows": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.2/kustomize_v4.0.2_windows_amd64.tar.gz", "661b8c970c98c9e86bb645216423807631d214576f82cfb5e30be1b64e404c30")},
+    "v4.0.3": {"darwin": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.3/kustomize_v4.0.3_darwin_amd64.tar.gz", "9e7c69c83eef4bd2641e4a8a79ffb900fa8fd05e125392086def5f78707f9b84"), "linux": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.3/kustomize_v4.0.3_linux_amd64.tar.gz", "7cfaa86f8323d9deaa8233c31f3843dbce71e56875b7bf22292e5bc56b13e259"), "windows": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.3/kustomize_v4.0.3_windows_amd64.tar.gz", "3824c30bb16b9515978ae7d0a2b6a2e87f69b71d8fa6b8dfc2d08fcd265d37d0")},
+    "v4.0.4": {"darwin": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.4/kustomize_v4.0.4_darwin_amd64.tar.gz", "46520fcd13aed85e944b7562702fcad69a6d024fd1de65234ecd2edbbf41ac99"), "linux": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.4/kustomize_v4.0.4_linux_amd64.tar.gz", "df1e23bb1f801faadbd1e2d2c4ba6839979dd58d26aeb2a6d46baf62039e25f0"), "windows": ("https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.0.4/kustomize_v4.0.4_windows_amd64.tar.gz", "04ef445997b3220fa023eef2455a64c144d9811208ae6b74c251aa1e95a29373")},
 }
