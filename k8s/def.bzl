@@ -14,7 +14,7 @@ _COMMON_ATTRS = {
     ),
     "no_gazelle": attr.bool(default = False),
     "debug": attr.bool(default = False),
-    "version": attr.string(default = "v0.17"),
+    "version": attr.string(default = "v0.19"),
     "_template": attr.label(
         default = "//k8s:code-generator.bash",
         allow_single_file = True,
