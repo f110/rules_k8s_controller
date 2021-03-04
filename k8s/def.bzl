@@ -37,19 +37,19 @@ _DEFAULT_K8S_PATCH_VERSION = {
     "v0.19": "v0.19.0",
     "v0.20": "v0.20.4",
 }
-_VENDORED_CONTROLLER_TOOLS_VERSIONS = ["v0.2.4", "v0.2.9", "v0.4.0"]
+_VENDORED_CONTROLLER_TOOLS_VERSIONS = ["v0.2.4", "v0.2.9", "v0.4.0", "v0.5.0"]
 
 def _controller_tools_bin_attrs():
     attrs = {}
     for v in _VENDORED_CONTROLLER_TOOLS_VERSIONS:
-        attrs["_bin_"+v.replace(".", "_")] = attr.label(
-            default = "//third_party/controller-tools-"+v+"/cmd/controller-gen",
+        attrs["_bin_" + v.replace(".", "_")] = attr.label(
+            default = "//third_party/controller-tools-" + v + "/cmd/controller-gen",
             executable = True,
             cfg = "host",
         )
     return attrs
 
-def _code_generator_impl(ctx, _bin, srcs, args, target_dirs = [], generated_dirs = [], filename = "", dep_runfiles = [], providers = []):
+def _code_generator_impl(ctx, _bin, srcs, args, module_name, target_dirs = [], generated_dirs = [], filename = "", dep_runfiles = [], providers = []):
     go = go_context(ctx)
 
     package_dirs = []
@@ -79,6 +79,7 @@ def _code_generator_impl(ctx, _bin, srcs, args, target_dirs = [], generated_dirs
         "@@GO_ROOT@@": shell.quote(paths.dirname(go.sdk.root_file.path)),
         "@@NO_GAZELLE@@": shell.quote(no_gazelle),
         "@@DEBUG@@": shell.quote(debug),
+        "@@MODULE_NAME@@": shell.quote(module_name),
     }
     out = ctx.actions.declare_file(ctx.label.name + ".sh")
     ctx.actions.expand_template(
@@ -87,7 +88,7 @@ def _code_generator_impl(ctx, _bin, srcs, args, target_dirs = [], generated_dirs
         substitutions = substitutions,
         is_executable = True,
     )
-    runfiles = ctx.runfiles(files = [_bin, ctx.executable._gazelle, ctx.file.header] + srcs, transitive_files = depset(dep_runfiles + go.sdk.srcs))
+    runfiles = ctx.runfiles(files = [_bin, ctx.executable._gazelle, ctx.file.header] + srcs, transitive_files = depset(dep_runfiles + go.sdk.srcs + go.sdk.tools))
     return [
         DefaultInfo(
             runfiles = runfiles,
@@ -173,6 +174,16 @@ def _deepcopy_gen_impl(ctx):
     providers = srcs_providers + embed_providers
     dep_runfiles = _flatten_deps(go_srcs)
 
+    module_name = ""
+    for v in providers:
+        if v[GoSource].srcs[0].dirname.startswith("vendor/"):
+            continue
+        x = _find_module_name(v[GoLibrary].importpath, v[GoSource].srcs[0].dirname)
+        if module_name != "" and module_name != x:
+            fail("Could not detect module name")
+        else:
+            module_name = x
+
     args = []
     args.append("--input-dirs=%s" % ",".join(_input_dir_args(providers)))
     args.append("--bounding-dirs=%s" % ",".join(_input_dir_args(providers)))
@@ -184,6 +195,7 @@ def _deepcopy_gen_impl(ctx):
         getattr(ctx.executable, "_deepcopy_gen_" + k8s_version),
         srcs,
         args,
+        module_name,
         filename = ctx.attr.outputname + ".go",
         target_dirs = [v[GoSource].srcs[0].dirname for v in providers],
         generated_dirs = [v[GoLibrary].importpath for v in srcs_providers],
@@ -217,6 +229,16 @@ def _register_gen_impl(ctx):
     srcs, providers = _extract_src_and_providers(go_srcs)
     dep_runfiles = _flatten_deps(go_srcs)
 
+    module_name = ""
+    for v in providers:
+        if v[GoSource].srcs[0].dirname.startswith("vendor/"):
+            continue
+        x = _find_module_name(v[GoLibrary].importpath, v[GoSource].srcs[0].dirname)
+        if module_name != "" and module_name != x:
+            fail("Could not detect module name")
+        else:
+            module_name = x
+
     args = []
     args.append("--input-dirs=%s" % ",".join(_input_dir_args(providers)))
     args.append("--go-header-file=%s" % ctx.file.header.path)
@@ -227,6 +249,7 @@ def _register_gen_impl(ctx):
         getattr(ctx.executable, "_register_gen_" + k8s_version),
         srcs,
         args,
+        module_name,
         filename = ctx.attr.outputname + ".go",
         target_dirs = [v[GoSource].srcs[0].dirname for v in providers],
         generated_dirs = [v[GoLibrary].importpath for v in providers],
@@ -283,6 +306,7 @@ def _client_gen_impl(ctx):
         getattr(ctx.executable, "_client_gen_" + k8s_version),
         srcs,
         args,
+        module_name,
         target_dirs = [target_dir],
         generated_dirs = [ctx.attr.clientpackage],
         dep_runfiles = dep_runfiles,
@@ -335,6 +359,7 @@ def _lister_gen_impl(ctx):
         getattr(ctx.executable, "_lister_gen_" + k8s_version),
         srcs,
         args,
+        module_name,
         target_dirs = [target_dir],
         generated_dirs = [ctx.attr.listerpackage],
         dep_runfiles = dep_runfiles,
@@ -389,6 +414,7 @@ def _informer_gen_impl(ctx):
         getattr(ctx.executable, "_informer_gen_" + k8s_version),
         srcs,
         args,
+        module_name,
         target_dirs = [target_dir],
         generated_dirs = [ctx.attr.informerpackage],
         dep_runfiles = dep_runfiles,
@@ -408,6 +434,7 @@ _informer_gen = rule(
 )
 
 def _crd_gen_impl(ctx):
+    go = go_context(ctx)
     go_srcs = ctx.attr.srcs
 
     srcs = []
@@ -444,7 +471,7 @@ def _crd_gen_impl(ctx):
     if ctx.attr.debug:
         debug = "true"
 
-    bin = getattr(ctx.executable, "_bin_"+ctx.attr.controller_tools_version.replace(".", "_"))
+    bin = getattr(ctx.executable, "_bin_" + ctx.attr.controller_tools_version.replace(".", "_"))
     substitutions = {
         "@@DEBUG@@": debug,
         "@@BIN@@": shell.quote(bin.short_path),
@@ -454,6 +481,7 @@ def _crd_gen_impl(ctx):
         "@@SRC_PACKAGE_NAMES@@": shell.array_literal(import_paths),
         "@@SRC_DIRS@@": shell.array_literal([x for x in src_dirs.keys()]),
         "@@MODULE@@": shell.quote(module_name),
+        "@@GO_ROOT@@": shell.quote(paths.dirname(go.sdk.root_file.path)),
     }
     out = ctx.actions.declare_file(ctx.label.name + ".sh")
     ctx.actions.expand_template(
@@ -462,7 +490,7 @@ def _crd_gen_impl(ctx):
         substitutions = substitutions,
         is_executable = True,
     )
-    runfiles = ctx.runfiles(files = [bin] + srcs, transitive_files = depset(dep_files))
+    runfiles = ctx.runfiles(files = [bin] + srcs, transitive_files = depset(dep_files + go.sdk.srcs + go.sdk.tools))
     return [
         DefaultInfo(
             runfiles = runfiles,
@@ -487,7 +515,8 @@ _crd_gen = rule(
             executable = True,
             cfg = "host",
         ),
-    }.items() + _controller_tools_bin_attrs().items()),
+    }.items() + _controller_tools_bin_attrs().items() + _GO_RULE_ATTRS.items()),
+    toolchains = ["@io_bazel_rules_go//go:toolchain"],
 )
 
 def k8s_code_generator(name, **kwargs):
@@ -528,6 +557,9 @@ def k8s_code_generator(name, **kwargs):
         "dir": kwargs["crd"],
         "srcs": kwargs["srcs"],
     }
+    for k in ["controller_tools_versions", "debug"]:
+        if k in kwargs:
+            crd_args[k] = kwargs[k]
 
     _deepcopy_gen(name = name + ".deepcopy", **deepcopy_args)
     _client_gen(name = name + ".client", **client_args)
@@ -537,6 +569,7 @@ def k8s_code_generator(name, **kwargs):
     _crd_gen(name = name + ".crd", **crd_args)
 
 def _rbac_gen_impl(ctx):
+    go = go_context(ctx)
     go_srcs = ctx.attr.srcs
 
     srcs = []
@@ -576,7 +609,7 @@ def _rbac_gen_impl(ctx):
     if ctx.attr.debug:
         debug = "true"
 
-    bin = getattr(ctx.executable, "_bin_"+ctx.attr.controller_tools_version.replace(".", "_"))
+    bin = getattr(ctx.executable, "_bin_" + ctx.attr.controller_tools_version.replace(".", "_"))
     substitutions = {
         "@@DEBUG@@": debug,
         "@@BIN@@": shell.quote(bin.short_path),
@@ -586,6 +619,7 @@ def _rbac_gen_impl(ctx):
         "@@SRC_PACKAGE_NAMES@@": shell.array_literal(import_paths),
         "@@SRC_DIRS@@": shell.array_literal([x for x in src_dirs.keys()]),
         "@@MODULE@@": shell.quote(module_name),
+        "@@GO_ROOT@@": shell.quote(paths.dirname(go.sdk.root_file.path)),
     }
     out = ctx.actions.declare_file(ctx.label.name + ".sh")
     ctx.actions.expand_template(
@@ -594,7 +628,7 @@ def _rbac_gen_impl(ctx):
         substitutions = substitutions,
         is_executable = True,
     )
-    runfiles = ctx.runfiles(files = [bin] + srcs, transitive_files = depset(dep_files))
+    runfiles = ctx.runfiles(files = [bin] + srcs, transitive_files = depset(dep_files + go.sdk.srcs + go.sdk.tools))
     return [
         DefaultInfo(
             runfiles = runfiles,
@@ -615,5 +649,6 @@ rbac_gen = rule(
             default = "//k8s:controller-gen.bash",
             allow_single_file = True,
         ),
-    }.items() + _controller_tools_bin_attrs().items()),
+    }.items() + _controller_tools_bin_attrs().items() + _GO_RULE_ATTRS.items()),
+    toolchains = ["@io_bazel_rules_go//go:toolchain"],
 )

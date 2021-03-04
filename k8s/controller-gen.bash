@@ -13,6 +13,7 @@ SRC_PACKAGE_NAMES=@@SRC_PACKAGE_NAMES@@
 SRC_DIRS=@@SRC_DIRS@@
 MODULE=@@MODULE@@
 
+GO_ROOT=@@GO_ROOT@@
 RUNFILE_DIR=$(pwd)
 CONTROLLER_GEN="$RUNFILE_DIR/$BIN"
 
@@ -31,7 +32,9 @@ for i in "${SRC_DIRS[@]}"; do
 done
 
 unset GO111MODULE
-export GOPATH=$RUNFILE_DIR
+export GOROOT=$RUNFILE_DIR/$GO_ROOT
+echo "module ${MODULE}" > go.mod
+echo "go 1.16" >> go.mod
 "$CONTROLLER_GEN" "${ARGS[@]}"
 
 cd "$BUILD_WORKSPACE_DIRECTORY"
