@@ -337,6 +337,9 @@ def _lister_gen_impl(ctx):
 
     go_srcs = ctx.attr.srcs
     srcs, providers = _extract_src_and_providers(go_srcs)
+    embed_srcs, embed_providers = _extract_src_and_providers(ctx.attr.embed)
+    srcs += embed_srcs
+    providers += embed_providers
     dep_runfiles = _flatten_deps(go_srcs)
 
     module_name = ""
