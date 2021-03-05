@@ -1,4 +1,4 @@
-workspace(name = "dev_f110_rules_extras")
+workspace(name = "dev_f110_rules_k8s_controller")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
@@ -24,7 +24,7 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_rules_dependencies", "go_register_to
 
 go_rules_dependencies()
 
-go_register_toolchains(version = "1.15.6")
+go_register_toolchains(version = "1.16")
 
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 

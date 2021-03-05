@@ -78,7 +78,7 @@ def _code_generator_impl(ctx, _bin, srcs, args, module_name, target_dirs = [], g
         "@@SRC_DIRS@@": shell.array_literal(src_dirs),
         "@@GO_ROOT@@": shell.quote(paths.dirname(go.sdk.root_file.path)),
         "@@NO_GAZELLE@@": shell.quote(no_gazelle),
-        "@@DEBUG@@": shell.quote(debug),
+        "@@DEBUG@@": debug,
         "@@MODULE_NAME@@": shell.quote(module_name),
     }
     out = ctx.actions.declare_file(ctx.label.name + ".sh")
@@ -111,7 +111,7 @@ def _extract_src_and_providers(go_srcs):
 def _input_dir_args(providers):
     imports = {}
     for v in providers:
-        imports[v[GoLibrary].importpath] = True
+        imports[v[GoSource].srcs[0].dirname] = True
 
     return [x for x in imports.keys()]
 

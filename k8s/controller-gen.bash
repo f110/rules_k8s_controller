@@ -17,19 +17,19 @@ GO_ROOT=@@GO_ROOT@@
 RUNFILE_DIR=$(pwd)
 CONTROLLER_GEN="$RUNFILE_DIR/$BIN"
 
-rm -rf src
-mkdir -p src
+#rm -rf src
+#mkdir -p src
 
-if [ -n "$(ls vendor 2> /dev/null)" ]; then
-  for f in vendor/*; do
-    ln -sf $RUNFILE_DIR/$f $RUNFILE_DIR/src
-  done
-fi
-
-mkdir -p src/$MODULE
-for i in "${SRC_DIRS[@]}"; do
-  ln -sf $RUNFILE_DIR/$i src/$MODULE/$i
-done
+#if [ -n "$(ls vendor 2> /dev/null)" ]; then
+#  for f in vendor/*; do
+#    ln -sf $RUNFILE_DIR/$f $RUNFILE_DIR/src
+#  done
+#fi
+#
+#mkdir -p src/$MODULE
+#for i in "${SRC_DIRS[@]}"; do
+#  ln -sf $RUNFILE_DIR/$i src/$MODULE/$i
+#done
 
 unset GO111MODULE
 export GOROOT=$RUNFILE_DIR/$GO_ROOT

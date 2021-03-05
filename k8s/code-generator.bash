@@ -21,23 +21,22 @@ MODULE_NAME=@@MODULE_NAME@@
 GEN="$RUNFILE_DIR/$BIN"
 GAZELLE="$RUNFILE_DIR/$GAZELLE_PATH"
 
-rm -rf src
-mkdir -p src
+#rm -rf src
+#mkdir -p src
 
-if [ -n "$(ls vendor 2> /dev/null)" ]; then
-    for f in vendor/*; do
-        ln -sf $RUNFILE_DIR/$f $RUNFILE_DIR/src
-    done
-fi
+#if [ -n "$(ls vendor 2> /dev/null)" ]; then
+#    for f in vendor/*; do
+#        ln -sf $RUNFILE_DIR/$f $RUNFILE_DIR/src
+#    done
+#fi
 
-for i in "${!SRC_PACKAGE_DIRS[@]}"; do
-    mkdir -p src/$(dirname ${SRC_PACKAGE_DIRS[$i]})
-    ln -sf $RUNFILE_DIR/${SRC_DIRS[$i]} src/${SRC_PACKAGE_DIRS[$i]}
-done
+#for i in "${!SRC_PACKAGE_DIRS[@]}"; do
+#    mkdir -p src/$(dirname ${SRC_PACKAGE_DIRS[$i]})
+#    ln -sf $RUNFILE_DIR/${SRC_DIRS[$i]} src/${SRC_PACKAGE_DIRS[$i]}
+#done
 
 unset GO111MODULE
 export GOROOT=$RUNFILE_DIR/$GO_ROOT
-#export GOPATH=$RUNFILE_DIR
 echo "module ${MODULE_NAME}" > go.mod
 echo "go 1.16" >> go.mod
 "$GEN" "--output-base=$RUNFILE_DIR" "${ARGS[@]}"
