@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "mock",
+    srcs = ["interface.go"],
+    importpath = "go.f110.dev/rules_k8s_controller/example/pkg/informers/externalversions/mock",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//example/pkg/informers/externalversions/internalinterfaces",
+        "//example/pkg/informers/externalversions/mock/v1alpha1",
+    ],
+)
