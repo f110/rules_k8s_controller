@@ -1,0 +1,21 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "externalversions",
+    srcs = [
+        "factory.go",
+        "generic.go",
+    ],
+    importpath = "go.f110.dev/rules_k8s_controller/example/pkg/informers/externalversions",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//example/pkg/api/mock/v1alpha1",
+        "//example/pkg/client/versioned",
+        "//example/pkg/informers/externalversions/internalinterfaces",
+        "//example/pkg/informers/externalversions/mock",
+        "//vendor/k8s.io/apimachinery/pkg/apis/meta/v1:meta",
+        "//vendor/k8s.io/apimachinery/pkg/runtime",
+        "//vendor/k8s.io/apimachinery/pkg/runtime/schema",
+        "@io_k8s_client_go//tools/cache:go_default_library",
+    ],
+)

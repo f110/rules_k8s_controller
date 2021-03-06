@@ -7,4 +7,5 @@ require (
 	github.com/bazelbuild/buildtools v0.0.0-20210227132407-f2aed9ee205d
 	github.com/google/go-github/v33 v33.0.0
 	github.com/spf13/pflag v1.0.5
+	k8s.io/apimachinery v0.20.4
 )

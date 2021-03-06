@@ -49,7 +49,7 @@ def _controller_tools_bin_attrs():
         )
     return attrs
 
-def _code_generator_impl(ctx, _bin, srcs, args, module_name, target_dirs = [], generated_dirs = [], filename = "", dep_runfiles = [], providers = []):
+def _code_generator_impl(ctx, _bin, srcs, header_file, args, module_name, target_dirs = [], generated_dirs = [], filename = "", dep_runfiles = [], providers = []):
     go = go_context(ctx)
 
     package_dirs = []
@@ -60,7 +60,7 @@ def _code_generator_impl(ctx, _bin, srcs, args, module_name, target_dirs = [], g
 
     debug = "false"
     if ctx.attr.debug:
-        args.append("-v=5")
+        args.append("-v=6")
         debug = "true"
 
     no_gazelle = "false"
@@ -78,8 +78,9 @@ def _code_generator_impl(ctx, _bin, srcs, args, module_name, target_dirs = [], g
         "@@SRC_DIRS@@": shell.array_literal(src_dirs),
         "@@GO_ROOT@@": shell.quote(paths.dirname(go.sdk.root_file.path)),
         "@@NO_GAZELLE@@": shell.quote(no_gazelle),
-        "@@DEBUG@@": shell.quote(debug),
+        "@@DEBUG@@": debug,
         "@@MODULE_NAME@@": shell.quote(module_name),
+        "@@HEADER_FILE@@": shell.quote(header_file.short_path),
     }
     out = ctx.actions.declare_file(ctx.label.name + ".sh")
     ctx.actions.expand_template(
@@ -187,13 +188,13 @@ def _deepcopy_gen_impl(ctx):
     args = []
     args.append("--input-dirs=%s" % ",".join(_input_dir_args(providers)))
     args.append("--bounding-dirs=%s" % ",".join(_input_dir_args(providers)))
-    args.append("--go-header-file=%s" % ctx.file.header.path)
     args.append("--output-file-base=%s" % ctx.attr.outputname)
 
     return _code_generator_impl(
         ctx,
         getattr(ctx.executable, "_deepcopy_gen_" + k8s_version),
         srcs,
+        ctx.file.header,
         args,
         module_name,
         filename = ctx.attr.outputname + ".go",
@@ -241,13 +242,13 @@ def _register_gen_impl(ctx):
 
     args = []
     args.append("--input-dirs=%s" % ",".join(_input_dir_args(providers)))
-    args.append("--go-header-file=%s" % ctx.file.header.path)
     args.append("--output-file-base=%s" % ctx.attr.outputname)
 
     return _code_generator_impl(
         ctx,
         getattr(ctx.executable, "_register_gen_" + k8s_version),
         srcs,
+        ctx.file.header,
         args,
         module_name,
         filename = ctx.attr.outputname + ".go",
@@ -297,7 +298,6 @@ def _client_gen_impl(ctx):
     args.append("--input=%s" % ",".join(_input_dir_args(providers)))
     args.append("--input-base")
     args.append("")
-    args.append("--go-header-file=%s" % ctx.file.header.path)
     args.append("--clientset-name=%s" % ctx.attr.clientsetname)
     args.append("--output-package=%s" % ctx.attr.clientpackage)
 
@@ -305,6 +305,7 @@ def _client_gen_impl(ctx):
         ctx,
         getattr(ctx.executable, "_client_gen_" + k8s_version),
         srcs,
+        ctx.file.header,
         args,
         module_name,
         target_dirs = [target_dir],
@@ -336,6 +337,9 @@ def _lister_gen_impl(ctx):
 
     go_srcs = ctx.attr.srcs
     srcs, providers = _extract_src_and_providers(go_srcs)
+    embed_srcs, embed_providers = _extract_src_and_providers(ctx.attr.embed)
+    srcs += embed_srcs
+    providers += embed_providers
     dep_runfiles = _flatten_deps(go_srcs)
 
     module_name = ""
@@ -351,13 +355,13 @@ def _lister_gen_impl(ctx):
 
     args = []
     args.append("--input-dirs=%s" % ",".join(_input_dir_args(providers)))
-    args.append("--go-header-file=%s" % ctx.file.header.path)
     args.append("--output-package=%s" % ctx.attr.listerpackage)
 
     return _code_generator_impl(
         ctx,
         getattr(ctx.executable, "_lister_gen_" + k8s_version),
         srcs,
+        ctx.file.header,
         args,
         module_name,
         target_dirs = [target_dir],
@@ -404,7 +408,6 @@ def _informer_gen_impl(ctx):
 
     args = []
     args.append("--input-dirs=%s" % ",".join(_input_dir_args(providers)))
-    args.append("--go-header-file=%s" % ctx.file.header.path)
     args.append("--versioned-clientset-package=%s/%s" % (ctx.attr.clientpackage, ctx.attr.clientsetname))
     args.append("--listers-package=%s" % ctx.attr.listerpackage)
     args.append("--output-package=%s" % ctx.attr.informerpackage)
@@ -413,6 +416,7 @@ def _informer_gen_impl(ctx):
         ctx,
         getattr(ctx.executable, "_informer_gen_" + k8s_version),
         srcs,
+        ctx.file.header,
         args,
         module_name,
         target_dirs = [target_dir],
