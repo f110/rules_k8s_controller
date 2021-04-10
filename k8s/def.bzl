@@ -170,9 +170,7 @@ def _deepcopy_gen_impl(ctx):
     out = ctx.actions.declare_file(ctx.label.name + ".sh")
 
     go_srcs = ctx.attr.srcs
-    srcs, srcs_providers = _extract_src_and_providers(go_srcs)
-    embed_srcs, embed_providers = _extract_src_and_providers(ctx.attr.embed)
-    providers = srcs_providers + embed_providers
+    srcs, providers = _extract_src_and_providers(go_srcs)
     dep_runfiles = _flatten_deps(go_srcs)
 
     module_name = ""
@@ -199,7 +197,7 @@ def _deepcopy_gen_impl(ctx):
         module_name,
         filename = ctx.attr.outputname + ".go",
         target_dirs = [v[GoSource].srcs[0].dirname for v in providers],
-        generated_dirs = [v[GoLibrary].importpath for v in srcs_providers],
+        generated_dirs = [v[GoLibrary].importpath for v in providers],
         dep_runfiles = dep_runfiles,
         providers = providers,
     )
