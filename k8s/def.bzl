@@ -197,7 +197,7 @@ def _deepcopy_gen_impl(ctx):
         module_name,
         filename = ctx.attr.outputname + ".go",
         target_dirs = [v[GoSource].srcs[0].dirname for v in providers],
-        generated_dirs = [v[GoLibrary].importpath for v in srcs_providers],
+        generated_dirs = [v[GoLibrary].importpath for v in providers],
         dep_runfiles = dep_runfiles,
         providers = providers,
     )
