@@ -1,0 +1,12 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "example2",
+    srcs = ["interface.go"],
+    importpath = "k8s.io/code-generator/examples/apiserver/informers/externalversions/example2",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.21.0/examples/apiserver/informers/externalversions/example2/v1:example2",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/informers/externalversions/internalinterfaces",
+    ],
+)

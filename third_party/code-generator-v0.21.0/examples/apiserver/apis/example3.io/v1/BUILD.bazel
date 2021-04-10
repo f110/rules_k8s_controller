@@ -1,0 +1,22 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "example3_io",
+    srcs = [
+        "doc.go",
+        "register.go",
+        "types.go",
+        "zz_generated.conversion.go",
+        "zz_generated.deepcopy.go",
+        "zz_generated.defaults.go",
+    ],
+    importpath = "k8s.io/code-generator/examples/apiserver/apis/example3.io/v1",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.21.0/examples/apiserver/apis/example3.io:example3_io",
+        "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
+        "@io_k8s_apimachinery//pkg/conversion:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime/schema:go_default_library",
+    ],
+)

@@ -1,0 +1,23 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "fake",
+    srcs = [
+        "doc.go",
+        "fake_example3.io_client.go",
+        "fake_testtype.go",
+    ],
+    importpath = "k8s.io/code-generator/examples/apiserver/clientset/internalversion/typed/example3.io/internalversion/fake",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.21.0/examples/apiserver/apis/example3.io:example3_io",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/clientset/internalversion/typed/example3.io/internalversion",
+        "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
+        "@io_k8s_apimachinery//pkg/labels:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime/schema:go_default_library",
+        "@io_k8s_apimachinery//pkg/types:go_default_library",
+        "@io_k8s_apimachinery//pkg/watch:go_default_library",
+        "@io_k8s_client_go//rest:go_default_library",
+        "@io_k8s_client_go//testing:go_default_library",
+    ],
+)

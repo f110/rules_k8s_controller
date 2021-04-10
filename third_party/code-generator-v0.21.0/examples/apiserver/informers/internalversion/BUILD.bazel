@@ -1,0 +1,25 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "internalversion",
+    srcs = [
+        "factory.go",
+        "generic.go",
+    ],
+    importpath = "k8s.io/code-generator/examples/apiserver/informers/internalversion",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.21.0/examples/apiserver/apis/example",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/apis/example2",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/apis/example3.io:example3_io",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/clientset/internalversion",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/informers/internalversion/example",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/informers/internalversion/example2",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/informers/internalversion/example3.io:example3_io",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/informers/internalversion/internalinterfaces",
+        "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime/schema:go_default_library",
+        "@io_k8s_client_go//tools/cache:go_default_library",
+    ],
+)

@@ -1,0 +1,22 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "example",
+    srcs = [
+        "clustertesttype.go",
+        "interface.go",
+        "testtype.go",
+    ],
+    importpath = "k8s.io/code-generator/examples/MixedCase/informers/externalversions/example/v1",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.21.0/examples/MixedCase/apis/example/v1:example",
+        "//third_party/code-generator-v0.21.0/examples/MixedCase/clientset/versioned",
+        "//third_party/code-generator-v0.21.0/examples/MixedCase/informers/externalversions/internalinterfaces",
+        "//third_party/code-generator-v0.21.0/examples/MixedCase/listers/example/v1:example",
+        "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime:go_default_library",
+        "@io_k8s_apimachinery//pkg/watch:go_default_library",
+        "@io_k8s_client_go//tools/cache:go_default_library",
+    ],
+)

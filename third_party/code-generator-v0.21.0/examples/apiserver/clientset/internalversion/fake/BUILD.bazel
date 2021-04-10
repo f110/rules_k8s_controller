@@ -1,0 +1,33 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "fake",
+    srcs = [
+        "clientset_generated.go",
+        "doc.go",
+        "register.go",
+    ],
+    importpath = "k8s.io/code-generator/examples/apiserver/clientset/internalversion/fake",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.21.0/examples/apiserver/apis/example",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/apis/example2",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/apis/example3.io:example3_io",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/clientset/internalversion",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/clientset/internalversion/typed/example/internalversion",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/clientset/internalversion/typed/example/internalversion/fake",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/clientset/internalversion/typed/example2/internalversion",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/clientset/internalversion/typed/example2/internalversion/fake",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/clientset/internalversion/typed/example3.io/internalversion",
+        "//third_party/code-generator-v0.21.0/examples/apiserver/clientset/internalversion/typed/example3.io/internalversion/fake",
+        "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime/schema:go_default_library",
+        "@io_k8s_apimachinery//pkg/runtime/serializer:go_default_library",
+        "@io_k8s_apimachinery//pkg/util/runtime:go_default_library",
+        "@io_k8s_apimachinery//pkg/watch:go_default_library",
+        "@io_k8s_client_go//discovery:go_default_library",
+        "@io_k8s_client_go//discovery/fake:go_default_library",
+        "@io_k8s_client_go//testing:go_default_library",
+    ],
+)

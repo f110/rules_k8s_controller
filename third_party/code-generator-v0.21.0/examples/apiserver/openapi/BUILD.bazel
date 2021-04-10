@@ -1,0 +1,13 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "openapi",
+    srcs = ["zz_generated.openapi.go"],
+    importpath = "k8s.io/code-generator/examples/apiserver/openapi",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.21.0/vendor/github.com/go-openapi/spec",
+        "//third_party/code-generator-v0.21.0/vendor/k8s.io/kube-openapi/pkg/common",
+        "@io_k8s_apimachinery//pkg/apis/meta/v1:go_default_library",
+    ],
+)

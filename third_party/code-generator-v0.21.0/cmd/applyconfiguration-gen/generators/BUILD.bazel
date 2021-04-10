@@ -1,0 +1,33 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "generators",
+    srcs = [
+        "applyconfiguration.go",
+        "internal.go",
+        "jsontagutil.go",
+        "openapi.go",
+        "packages.go",
+        "refgraph.go",
+        "types.go",
+        "util.go",
+    ],
+    importpath = "k8s.io/code-generator/cmd/applyconfiguration-gen/generators",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.21.0/cmd/applyconfiguration-gen/args",
+        "//third_party/code-generator-v0.21.0/cmd/client-gen/generators/util",
+        "//third_party/code-generator-v0.21.0/cmd/client-gen/types",
+        "//third_party/code-generator-v0.21.0/vendor/github.com/go-openapi/spec",
+        "//third_party/code-generator-v0.21.0/vendor/github.com/googleapis/gnostic/compiler",
+        "//third_party/code-generator-v0.21.0/vendor/github.com/googleapis/gnostic/openapiv2",
+        "//third_party/code-generator-v0.21.0/vendor/gopkg.in/yaml.v2:yaml_v2",
+        "//third_party/code-generator-v0.21.0/vendor/k8s.io/gengo/args",
+        "//third_party/code-generator-v0.21.0/vendor/k8s.io/gengo/generator",
+        "//third_party/code-generator-v0.21.0/vendor/k8s.io/gengo/namer",
+        "//third_party/code-generator-v0.21.0/vendor/k8s.io/gengo/types",
+        "//third_party/code-generator-v0.21.0/vendor/k8s.io/klog/v2:klog",
+        "//third_party/code-generator-v0.21.0/vendor/k8s.io/kube-openapi/pkg/schemaconv",
+        "//third_party/code-generator-v0.21.0/vendor/k8s.io/kube-openapi/pkg/util/proto",
+    ],
+)
