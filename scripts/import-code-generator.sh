@@ -31,6 +31,7 @@ find . -name "*_test.go" -delete
 find . -name "testdata" -type d | xargs rm -rf
 find . -name "_examples" -type d | xargs rm -rf
 find . -name ".*" -maxdepth 1 | grep -v "^.$" | xargs rm -rf {} +
+rm -rf examples
 
 cat <<EOS > BUILD.bazel
 load("//go:vendor.bzl", "go_vendor")
