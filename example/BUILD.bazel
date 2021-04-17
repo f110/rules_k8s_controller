@@ -2,3 +2,9 @@ exports_files(
     ["boilerplate.go.txt"],
     visibility = ["//visibility:public"],
 )
+
+load("//k8s/kind:cluster.bzl", "cluster")
+
+cluster(
+    name = "k8s-controller",
+)

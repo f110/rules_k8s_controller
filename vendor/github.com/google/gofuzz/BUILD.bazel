@@ -1,17 +1,6 @@
 load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
 go_library(
-    name = "fuzz",
-    srcs = [
-        "doc.go",
-        "fuzz.go",
-    ],
-    importmap = "vendor/github.com/google/gofuzz",
-    importpath = "",
-    visibility = ["//visibility:public"],
-)
-
-go_library(
     name = "gofuzz",
     srcs = [
         "doc.go",

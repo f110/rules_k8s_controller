@@ -23,3 +23,10 @@ go_register_toolchains(version = "1.16")
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 
 gazelle_dependencies()
+
+load("//k8s/kind:def.bzl", "kind_binary")
+
+kind_binary(
+    name = "kind",
+    version = "0.10.0"
+)
