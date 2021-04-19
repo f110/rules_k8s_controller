@@ -6,16 +6,25 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/xerrors"
 	goyaml "gopkg.in/yaml.v2"
 	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/yaml"
+	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	configv1alpha4 "sigs.k8s.io/kind/pkg/apis/config/v1alpha4"
@@ -27,6 +36,7 @@ func main() {
 	}
 	createCmd(rootCmd)
 	deleteCmd(rootCmd)
+	applyCmd(rootCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "%+v\n", err)
@@ -35,7 +45,7 @@ func main() {
 }
 
 func createCmd(rootCmd *cobra.Command) {
-	var name, kind, k8sVersion string
+	var name, kind, k8sVersion, manifest string
 	workerNum := 1
 	cmd := &cobra.Command{
 		Use: "create",
@@ -47,6 +57,11 @@ func createCmd(rootCmd *cobra.Command) {
 			if err := cluster.Create(k8sVersion, workerNum); err != nil {
 				return xerrors.Errorf(": %w", err)
 			}
+			if manifest != "" {
+				if err := cluster.Apply(manifest, "kindcluster"); err != nil {
+					return xerrors.Errorf(": %w", err)
+				}
+			}
 
 			return nil
 		},
@@ -55,8 +70,7 @@ func createCmd(rootCmd *cobra.Command) {
 	cmd.Flags().StringVar(&kind, "kind", "", "The path of kind")
 	cmd.Flags().StringVar(&k8sVersion, "k8s-version", "v1.20.2", "Cluster version")
 	cmd.Flags().IntVar(&workerNum, "worker-num", workerNum, "The number of worker")
-	// TODO:
-	//cmd.Flags().StringVar(&manifest, "manifest", "", "The path of default manifest")
+	cmd.Flags().StringVar(&manifest, "manifest", "", "The path of default manifest")
 
 	rootCmd.AddCommand(cmd)
 }
@@ -78,6 +92,28 @@ func deleteCmd(rootCmd *cobra.Command) {
 	}
 	cmd.Flags().StringVar(&name, "name", "kindcluster", "Name of cluster")
 	cmd.Flags().StringVar(&kind, "kind", "", "The path of kind")
+
+	rootCmd.AddCommand(cmd)
+}
+
+func applyCmd(rootCmd *cobra.Command) {
+	var name, kind, manifest string
+	cmd := &cobra.Command{
+		Use: "apply",
+		RunE: func(_ *cobra.Command, _ []string) error {
+			cluster, err := NewCluster(kind, name, "")
+			if err != nil {
+				return xerrors.Errorf(": %w", err)
+			}
+			if err := cluster.Apply(manifest, "kindcluster"); err != nil {
+				return xerrors.Errorf(": %w", err)
+			}
+			return nil
+		},
+	}
+	cmd.Flags().StringVar(&name, "name", "kindcluster", "")
+	cmd.Flags().StringVar(&kind, "kind", "", "")
+	cmd.Flags().StringVar(&manifest, "manifest", "", "")
 
 	rootCmd.AddCommand(cmd)
 }
@@ -297,6 +333,141 @@ func (c *Cluster) WaitReady(ctx context.Context) error {
 
 		return false, nil
 	})
+}
+
+func (c *Cluster) Apply(f, fieldManager string) error {
+	buf, err := os.ReadFile(f)
+	if err != nil {
+		return xerrors.Errorf(": %w", err)
+	}
+	cfg, err := c.RESTConfig()
+	if err != nil {
+		return xerrors.Errorf(": %w", err)
+	}
+
+	if err := ApplyManifestFromString(cfg, string(buf), fieldManager); err != nil {
+		return xerrors.Errorf(": %w", err)
+	}
+
+	return nil
+}
+
+func LoadUnstructuredFromString(manifest string) ([]*unstructured.Unstructured, error) {
+	objs := make([]*unstructured.Unstructured, 0)
+	d := yaml.NewYAMLOrJSONDecoder(strings.NewReader(manifest), 4096)
+	for {
+		ext := runtime.RawExtension{}
+		if err := d.Decode(&ext); err != nil {
+			if err == io.EOF {
+				break
+			}
+			return nil, xerrors.Errorf(": %w", err)
+		}
+		if len(ext.Raw) == 0 {
+			continue
+		}
+
+		obj, _, err := unstructured.UnstructuredJSONScheme.Decode(ext.Raw, nil, nil)
+		if err != nil {
+			return nil, xerrors.Errorf(": %w", err)
+		}
+		objs = append(objs, obj.(*unstructured.Unstructured))
+	}
+
+	return objs, nil
+}
+
+type Objects []*unstructured.Unstructured
+
+func ApplyManifestFromString(cfg *rest.Config, manifest, fieldManager string) error {
+	objs, err := LoadUnstructuredFromString(manifest)
+	if err != nil {
+		return xerrors.Errorf(": %w", err)
+	}
+
+	err = Objects(objs).Apply(cfg, fieldManager)
+	if err != nil {
+		return xerrors.Errorf(": %w", err)
+	}
+	return nil
+}
+
+func (k Objects) Apply(cfg *rest.Config, fieldManager string) error {
+	disClient, err := discovery.NewDiscoveryClientForConfig(cfg)
+	if err != nil {
+		return xerrors.Errorf(": %w", err)
+	}
+	_, apiResourcesList, err := disClient.ServerGroupsAndResources()
+	if err != nil {
+		return xerrors.Errorf(": %w", err)
+	}
+
+	for _, obj := range k {
+		gv := obj.GroupVersionKind().GroupVersion()
+
+		conf := *cfg
+		conf.GroupVersion = &gv
+		if gv.Group == "" {
+			conf.APIPath = "/api"
+		} else {
+			conf.APIPath = "/apis"
+		}
+		conf.NegotiatedSerializer = scheme.Codecs.WithoutConversion()
+		client, err := rest.RESTClientFor(&conf)
+		if err != nil {
+			return xerrors.Errorf(": %w", err)
+		}
+
+		var apiResource *metav1.APIResource
+		for _, v := range apiResourcesList {
+			if v.GroupVersion == gv.String() {
+				for _, v := range v.APIResources {
+					if v.Kind == obj.GroupVersionKind().Kind && !strings.HasSuffix(v.Name, "/status") {
+						apiResource = &v
+						break
+					}
+				}
+			}
+		}
+		if apiResource == nil {
+			continue
+		}
+
+		err = PollImmediate(context.TODO(), 5*time.Second, 30*time.Second, func(ctx context.Context) (bool, error) {
+			req := client.Patch(types.ApplyPatchType)
+			data, err := runtime.Encode(unstructured.UnstructuredJSONScheme, obj)
+			if err != nil {
+				return true, nil
+			}
+			force := true
+			res := req.
+				NamespaceIfScoped(obj.GetNamespace(), apiResource.Namespaced).
+				Resource(apiResource.Name).
+				Name(obj.GetName()).
+				VersionedParams(&metav1.PatchOptions{FieldManager: fieldManager, Force: &force}, metav1.ParameterCodec).
+				Body(data).
+				Do(ctx)
+			if err := res.Error(); err != nil {
+				switch {
+				case apierrors.IsAlreadyExists(err):
+					return false, nil
+				case apierrors.IsInternalError(err):
+					fmt.Fprintf(os.Stderr, "%s %v\n", obj.GetName(), err)
+					return false, nil
+				default:
+					fmt.Fprintf(os.Stderr, "Applying %s has error. don't retry: %v\n", obj.GetName(), err)
+				}
+
+				return true, nil
+			}
+			return true, nil
+		})
+		if err != nil {
+			return xerrors.Errorf(": %w", err)
+		}
+	}
+
+	return nil
 }
 
 func Poll(ctx context.Context, interval, timeout time.Duration, fn func(ctx context.Context) (done bool, err error)) error {

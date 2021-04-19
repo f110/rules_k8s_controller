@@ -14,7 +14,7 @@ http_archive(
     ],
 )
 
-load("@io_bazel_rules_go//go:deps.bzl", "go_rules_dependencies", "go_register_toolchains")
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
 
 go_rules_dependencies()
 
@@ -28,5 +28,12 @@ load("//k8s/kind:def.bzl", "kind_binary")
 
 kind_binary(
     name = "kind",
-    version = "0.10.0"
+    version = "0.10.0",
+)
+
+load("//k8s/kustomize:def.bzl", "kustomize_binary")
+
+kustomize_binary(
+    name = "kustomize",
+    version = "v4.0.0",
 )

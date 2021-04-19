@@ -1,7 +1,7 @@
 load("@bazel_skylib//lib:shell.bzl", "shell")
 
 def _cluster_create_impl(ctx):
-    out = ctx.actions.declare_file(ctx.label.name+".sh")
+    out = ctx.actions.declare_file(ctx.label.name + ".sh")
     args = [
         "create",
         "--k8s-version=%s" % ctx.attr.version,
@@ -9,6 +9,9 @@ def _cluster_create_impl(ctx):
     ]
     if ctx.attr.cluster_name:
         args.append("--name=%s" % ctx.attr.cluster_name)
+    if ctx.file.manifest:
+        args.append("--manifest=%s" % ctx.file.manifest.short_path)
+
     substitutions = {
         "@@BIN@@": shell.quote(ctx.executable._bin.short_path),
         "@@KIND@@": shell.quote(ctx.file._kind.path),
@@ -20,12 +23,14 @@ def _cluster_create_impl(ctx):
         substitutions = substitutions,
     )
     files = [ctx.file._kind, ctx.executable._bin]
+    if ctx.file.manifest:
+        files.append(ctx.file.manifest)
 
     return [
         DefaultInfo(
             executable = out,
-            runfiles = ctx.runfiles(files = files)
-        )
+            runfiles = ctx.runfiles(files = files),
+        ),
     ]
 
 cluster_create = rule(
@@ -35,13 +40,16 @@ cluster_create = rule(
         "cluster_name": attr.string(),
         "version": attr.string(default = "v1.20.2"),
         "worker_num": attr.int(default = 1),
+        "manifest": attr.label(
+            allow_single_file = True,
+        ),
         "_template": attr.label(
             default = "//k8s/kind:cluster.bash",
             allow_single_file = True,
         ),
         "_kind": attr.label(
             default = "@kind//:file",
-            allow_single_file = True
+            allow_single_file = True,
         ),
         "_bin": attr.label(
             default = "//tools/kindcluster",
@@ -56,7 +64,7 @@ cluster_create = rule(
 )
 
 def _cluster_delete_impl(ctx):
-    out = ctx.actions.declare_file(ctx.label.name+".sh")
+    out = ctx.actions.declare_file(ctx.label.name + ".sh")
     args = ["delete"]
     if ctx.attr.cluster_name:
         args.append("--name=%s" % ctx.attr.cluster_name)
@@ -75,8 +83,8 @@ def _cluster_delete_impl(ctx):
     return [
         DefaultInfo(
             executable = out,
-            runfiles = ctx.runfiles(files = files)
-        )
+            runfiles = ctx.runfiles(files = files),
+        ),
     ]
 
 cluster_delete = rule(
@@ -90,9 +98,9 @@ cluster_delete = rule(
         ),
         "_kind": attr.label(
             default = "@kind//:file",
-            allow_single_file = True
+            allow_single_file = True,
         ),
-       "_bin": attr.label(
+        "_bin": attr.label(
             default = "//tools/kindcluster",
             executable = True,
             cfg = "host",
@@ -106,5 +114,5 @@ cluster_delete = rule(
 
 def cluster(name, **kwargs):
     kwargs["cluster_name"] = name
-    cluster_create(name = name+".create", **kwargs)
-    cluster_delete(name = name+".delete", cluster_name = name)
+    cluster_create(name = name + ".create", **kwargs)
+    cluster_delete(name = name + ".delete", cluster_name = name)

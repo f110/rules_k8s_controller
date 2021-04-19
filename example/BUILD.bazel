@@ -3,8 +3,19 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 
+load("//k8s/kustomize:def.bzl", "kustomization")
+
+kustomization(
+    name = "manifest",
+    src = "kustomization.yaml",
+    resources = [
+        "minio-operator.yaml",
+    ],
+)
+
 load("//k8s/kind:cluster.bzl", "cluster")
 
 cluster(
     name = "k8s-controller",
+    manifest = ":manifest",
 )
