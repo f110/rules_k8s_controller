@@ -4,7 +4,7 @@ rules_k8s_controller
 
 rules_k8s_controller provides the rule for bazel that for code-generator and controller-tools.
 
-Currently support:
+Currently supported:
 
 * Generate deepcopy
 * Generate clientset
@@ -29,6 +29,10 @@ Setup
             "https://github.com/f110/rules_k8s_controller/archive/v0.10.0.tar.gz",
         ],
     )
+
+    load("@dev_f110_rules_k8s_controller//:deps.bzl", "rules_k8s_controller_dependencies")
+
+    rules_k8s_controller_dependencies()
 
 LICENSE
 ==========
