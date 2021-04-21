@@ -2,6 +2,20 @@
 rules_k8s_controller
 =======================
 
+rules_k8s_controller provides the rule for bazel that for code-generator and controller-tools.
+
+Currently support:
+
+* Generate deepcopy
+* Generate clientset
+* Generate informer
+* Generate lister
+* Generate register
+* Generate CustomResourceDefinition
+* Generate the manifest of RBAC
+* Support kustomize
+* Create the cluster for development by kind
+
 Setup
 ======
 
