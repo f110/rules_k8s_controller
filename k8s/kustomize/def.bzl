@@ -1,5 +1,6 @@
 load("//k8s/kustomize:assets.bzl", "KUSTOMIZE_ASSETS")
 load("@bazel_skylib//lib:paths.bzl", "paths")
+load("//k8s/private/util:semver.bzl", "semver")
 
 Kustomization = provider()
 
@@ -22,7 +23,14 @@ def _kustomize_binary_impl(ctx):
         type = "tar.gz",
     )
 
-    ctx.file("BUILD.bazel", "sh_binary(name = \"bin\", srcs = [\"kustomize\"], visibility = [\"//visibility:public\"])")
+    ctx.template(
+        "BUILD.bazel",
+        Label("@dev_f110_rules_k8s_controller//k8s/kustomize:BUILD.kustomize.bazel"),
+        executable = False,
+        substitutions = {
+            "{version}": ctx.attr.version,
+        },
+    )
 
 kustomize_binary = repository_rule(
     implementation = _kustomize_binary_impl,
@@ -31,13 +39,45 @@ kustomize_binary = repository_rule(
     },
 )
 
+KustomizeToolchain = provider(
+    fields = {
+        "version": "The version string of kustomize",
+        "bin": "",
+    },
+)
+
+def _kustomize_toolchain(ctx):
+    return [KustomizeToolchain(
+        version = ctx.attr.version,
+        bin = ctx.executable.bin,
+    )]
+
+kustomize_toolchain = rule(
+    implementation = _kustomize_toolchain,
+    attrs = {
+        "version": attr.string(
+            mandatory = True,
+        ),
+        "bin": attr.label(
+            executable = True,
+            cfg = "host",
+        ),
+    },
+)
+
 def _kustomization_impl(ctx):
+    toolchain = ctx.attr._kustomize[KustomizeToolchain]
+
     out = ctx.actions.declare_file("kustomize.%s.yaml" % ctx.label.name)
     args = ctx.actions.args()
     args.add("build")
     args.add(paths.dirname(ctx.file.src.path))
     args.add("--output=%s" % out.path)
-    args.add("--load_restrictor=none")
+    v = semver.parse(toolchain.version)
+    if semver.gte(v, semver.parse("v4.0.1")):
+        args.add("--load-restrictor=LoadRestrictionsNone")
+    else:
+        args.add("--load_restrictor=none")
 
     srcs = []
     for x in ctx.attr.resources:
@@ -47,7 +87,7 @@ def _kustomization_impl(ctx):
         srcs.extend(x.files.to_list())
 
     ctx.actions.run(
-        executable = ctx.executable._kustomize,
+        executable = toolchain.bin,
         inputs = depset(direct = [ctx.file.src], transitive = [depset(srcs)]),
         outputs = [out],
         arguments = [args],
@@ -72,9 +112,7 @@ kustomization = rule(
         "src": attr.label(allow_single_file = True),
         "resources": attr.label_list(allow_files = True),
         "_kustomize": attr.label(
-            executable = True,
-            cfg = "host",
-            default = "@kustomize//:bin",
+            default = "@kustomize//:toolchain",
         ),
     },
 )

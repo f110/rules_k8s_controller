@@ -35,5 +35,9 @@ load("//k8s/kustomize:def.bzl", "kustomize_binary")
 
 kustomize_binary(
     name = "kustomize",
-    version = "v4.0.0",
+    version = "v4.0.2",
 )
+
+load("@bazel_skylib//lib:unittest.bzl", "register_unittest_toolchains")
+
+register_unittest_toolchains()
