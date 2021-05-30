@@ -1,4 +1,14 @@
 KIND_ASSETS = {
+    "0.11.1": {
+        "linux": (
+            "https://github.com/kubernetes-sigs/kind/releases/download/v0.11.1/kind-linux-amd64",
+            "949f81b3c30ca03a3d4effdecda04f100fa3edc07a28b19400f72ede7c5f0491",
+        ),
+        "darwin": (
+            "https://github.com/kubernetes-sigs/kind/releases/download/v0.11.1/kind-darwin-amd64",
+            "432bef555a70e9360b44661c759658265b9eaaf7f75f1beec4c4d1e6bbf97ce3",
+        ),
+    },
     "0.11.0": {
         "linux": (
             "https://github.com/kubernetes-sigs/kind/releases/download/v0.11.0/kind-linux-amd64",
