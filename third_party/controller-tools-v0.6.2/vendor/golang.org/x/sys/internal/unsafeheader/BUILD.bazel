@@ -1,0 +1,9 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "unsafeheader",
+    srcs = ["unsafeheader.go"],
+    importmap = "sigs.k8s.io/controller-tools/vendor/golang.org/x/sys/internal/unsafeheader",
+    importpath = "golang.org/x/sys/internal/unsafeheader",
+    visibility = ["//third_party/controller-tools-v0.6.2/vendor/golang.org/x/sys:__subpackages__"],
+)

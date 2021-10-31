@@ -14,7 +14,7 @@ fi
 TMPDIR=$(mktemp -d)
 echo "Create temporary directory ${TMPDIR}"
 mkdir -p "${TMPDIR}"/third_party/${NAME}-${VERSION}
-cp -r ${TOPDIR}/WORKSPACE ${TOPDIR}/internal/go ${TMPDIR}
+cp -r ${TOPDIR}/internal/go ${TMPDIR}
 cat <<EOS > ${TMPDIR}/WORKSPACE
 workspace(name = "dev_f110_rules_k8s_controller")
 
