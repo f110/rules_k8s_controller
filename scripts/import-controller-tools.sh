@@ -2,7 +2,7 @@
 set -e
 
 NAME="controller-tools"
-VERSION="v0.6.2"
+VERSION="v0.7.0"
 
 TOPDIR=$BUILD_WORKSPACE_DIRECTORY
 TARGETDIR="${TOPDIR}/third_party/${NAME}-${VERSION}"

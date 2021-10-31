@@ -1,0 +1,20 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "watch",
+    srcs = [
+        "filechanges.go",
+        "inotify.go",
+        "inotify_tracker.go",
+        "polling.go",
+        "watch.go",
+    ],
+    importmap = "sigs.k8s.io/controller-tools/vendor/github.com/nxadm/tail/watch",
+    importpath = "github.com/nxadm/tail/watch",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/controller-tools-v0.7.0/vendor/github.com/fsnotify/fsnotify",
+        "//third_party/controller-tools-v0.7.0/vendor/github.com/nxadm/tail/util",
+        "//third_party/controller-tools-v0.7.0/vendor/gopkg.in/tomb.v1:tomb_v1",
+    ],
+)

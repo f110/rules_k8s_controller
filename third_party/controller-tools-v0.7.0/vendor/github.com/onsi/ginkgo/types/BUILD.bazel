@@ -1,0 +1,18 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "types",
+    srcs = [
+        "code_location.go",
+        "deprecation_support.go",
+        "synchronization.go",
+        "types.go",
+    ],
+    importmap = "sigs.k8s.io/controller-tools/vendor/github.com/onsi/ginkgo/types",
+    importpath = "github.com/onsi/ginkgo/types",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/controller-tools-v0.7.0/vendor/github.com/onsi/ginkgo/config",
+        "//third_party/controller-tools-v0.7.0/vendor/github.com/onsi/ginkgo/formatter",
+    ],
+)

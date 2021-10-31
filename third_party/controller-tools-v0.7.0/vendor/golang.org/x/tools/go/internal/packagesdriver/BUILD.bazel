@@ -1,0 +1,10 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "packagesdriver",
+    srcs = ["sizes.go"],
+    importmap = "sigs.k8s.io/controller-tools/vendor/golang.org/x/tools/go/internal/packagesdriver",
+    importpath = "golang.org/x/tools/go/internal/packagesdriver",
+    visibility = ["//third_party/controller-tools-v0.7.0/vendor/golang.org/x/tools/go:__subpackages__"],
+    deps = ["//third_party/controller-tools-v0.7.0/vendor/golang.org/x/tools/internal/gocommand"],
+)
