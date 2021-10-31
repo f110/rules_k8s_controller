@@ -83,7 +83,10 @@ func (c *Clientset) Tracker() testing.ObjectTracker {
 	return c.tracker
 }
 
-var _ clientset.Interface = &Clientset{}
+var (
+	_ clientset.Interface = &Clientset{}
+	_ testing.FakeClient  = &Clientset{}
+)
 
 // MockV1alpha1 retrieves the MockV1alpha1Client
 func (c *Clientset) MockV1alpha1() mockv1alpha1.MockV1alpha1Interface {
