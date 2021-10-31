@@ -190,12 +190,18 @@ func releaseToKeyValueExpr(release *release) *build.KeyValueExpr {
 		return release.Assets[i].OS < release.Assets[j].OS
 	})
 	assets := make(map[string][]*asset)
+	var osNames []string
 	for _, v := range release.Assets {
+		if _, ok := assets[v.OS]; !ok {
+			osNames = append(osNames, v.OS)
+		}
 		assets[v.OS] = append(assets[v.OS], v)
 	}
+	sort.Strings(osNames)
 
 	files := make([]*build.KeyValueExpr, 0)
-	for os, v := range assets {
+	for _, osName := range osNames {
+		v := assets[osName]
 		sort.Slice(v, func(i, j int) bool {
 			return v[i].Arch < v[j].Arch
 		})
@@ -214,7 +220,7 @@ func releaseToKeyValueExpr(release *release) *build.KeyValueExpr {
 		}
 
 		files = append(files, &build.KeyValueExpr{
-			Key:   &build.StringExpr{Value: os},
+			Key:   &build.StringExpr{Value: osName},
 			Value: osFiles,
 		})
 	}

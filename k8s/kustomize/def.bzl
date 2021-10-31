@@ -12,11 +12,15 @@ def _kustomize_binary_impl(ctx):
         os = "darwin"
     else:
         fail("%s is not supported" % ctx.os.name)
+    arch = ctx.execute(["uname", "-m"]).stdout.strip()
+    # On Linux, uname returns x86_64 as CPU architecture.
+    if arch == "x86_64":
+        arch = "amd64"
 
     if not ctx.attr.version in KUSTOMIZE_ASSETS:
         fail("%s is not supported version" % ctx.attr.version)
 
-    url, checksum = KUSTOMIZE_ASSETS[ctx.attr.version][os]
+    url, checksum = KUSTOMIZE_ASSETS[ctx.attr.version][os][arch]
     ctx.download_and_extract(
         url = url,
         sha256 = checksum,
