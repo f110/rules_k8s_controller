@@ -34,6 +34,7 @@ type release struct {
 
 type asset struct {
 	OS     string
+	Arch   string
 	URL    string
 	SHA256 string
 }
@@ -61,12 +62,15 @@ func getRelease(ver string) (*release, error) {
 			continue
 		}
 		s := strings.Split(v.GetName(), "_")
-		if s[3] != "amd64.tar.gz" {
+		if s[3] != "amd64.tar.gz" && s[3] != "arm64.tar.gz" {
 			continue
 		}
+		a := strings.Split(s[3], ".")
+		arch := a[0]
 		assets[v.GetName()] = &asset{
-			OS:  s[2],
-			URL: v.GetBrowserDownloadURL(),
+			OS:   s[2],
+			Arch: arch,
+			URL:  v.GetBrowserDownloadURL(),
 		}
 	}
 	newRelease := &release{Version: ver, Assets: make([]*asset, 0)}
@@ -185,19 +189,36 @@ func releaseToKeyValueExpr(release *release) *build.KeyValueExpr {
 	sort.Slice(release.Assets, func(i, j int) bool {
 		return release.Assets[i].OS < release.Assets[j].OS
 	})
+	assets := make(map[string][]*asset)
+	for _, v := range release.Assets {
+		assets[v.OS] = append(assets[v.OS], v)
+	}
 
 	files := make([]*build.KeyValueExpr, 0)
-	for _, v := range release.Assets {
-		files = append(files, &build.KeyValueExpr{
-			Key: &build.StringExpr{Value: v.OS},
-			Value: &build.TupleExpr{
-				List: []build.Expr{
-					&build.StringExpr{Value: v.URL},
-					&build.StringExpr{Value: v.SHA256},
+	for os, v := range assets {
+		sort.Slice(v, func(i, j int) bool {
+			return v[i].Arch < v[j].Arch
+		})
+
+		osFiles := &build.DictExpr{}
+		for _, a := range v {
+			osFiles.List = append(osFiles.List, &build.KeyValueExpr{
+				Key: &build.StringExpr{Value: a.Arch},
+				Value: &build.TupleExpr{
+					List: []build.Expr{
+						&build.StringExpr{Value: a.URL},
+						&build.StringExpr{Value: a.SHA256},
+					},
 				},
-			},
+			})
+		}
+
+		files = append(files, &build.KeyValueExpr{
+			Key:   &build.StringExpr{Value: os},
+			Value: osFiles,
 		})
 	}
+
 	kv := &build.KeyValueExpr{
 		Key: &build.StringExpr{Value: release.Version},
 		Value: &build.DictExpr{
