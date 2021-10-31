@@ -1,0 +1,13 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "schemaconv",
+    srcs = ["smd.go"],
+    importmap = "k8s.io/code-generator/vendor/k8s.io/kube-openapi/pkg/schemaconv",
+    importpath = "k8s.io/kube-openapi/pkg/schemaconv",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.22.0/vendor/k8s.io/kube-openapi/pkg/util/proto",
+        "//third_party/code-generator-v0.22.0/vendor/sigs.k8s.io/structured-merge-diff/v4/schema",
+    ],
+)

@@ -1,0 +1,19 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "args",
+    srcs = [
+        "args.go",
+        "gvpackages.go",
+        "gvtype.go",
+    ],
+    importpath = "k8s.io/code-generator/cmd/client-gen/args",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.22.0/cmd/client-gen/generators/util",
+        "//third_party/code-generator-v0.22.0/cmd/client-gen/types",
+        "//third_party/code-generator-v0.22.0/pkg/util",
+        "//third_party/code-generator-v0.22.0/vendor/github.com/spf13/pflag",
+        "//third_party/code-generator-v0.22.0/vendor/k8s.io/gengo/args",
+    ],
+)
