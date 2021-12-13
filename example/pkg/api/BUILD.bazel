@@ -6,11 +6,11 @@ k8s_code_generator(
         "//example/pkg/api/mock/v1alpha1",
     ],
     clientpackage = "go.f110.dev/rules_k8s_controller/example/pkg/client",
-    controller_tools_version = "v0.7.0",
+    controller_tools_version = "v0.6.2",
     crd = "example/crd",
     header = "//example:boilerplate.go.txt",
     informerpackage = "go.f110.dev/rules_k8s_controller/example/pkg/informers",
     listerpackage = "go.f110.dev/rules_k8s_controller/example/pkg/listers",
     no_gazelle = True,
-    version = "v0.22",
+    version = "v0.23",
 )
