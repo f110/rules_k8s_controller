@@ -1,0 +1,13 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+load("//go:vendor.bzl", "go_vendor")
+
+# gazelle:prefix k8s.io/code-generator
+
+go_vendor(name = "vendor")
+
+go_library(
+    name = "code-generator",
+    srcs = ["doc.go"],
+    importpath = "k8s.io/code-generator",
+    visibility = ["//visibility:public"],
+)

@@ -1,0 +1,16 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "prerelease-lifecycle-generators",
+    srcs = ["status.go"],
+    importpath = "k8s.io/code-generator/cmd/prerelease-lifecycle-gen/prerelease-lifecycle-generators",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.23.0/vendor/k8s.io/gengo/args",
+        "//third_party/code-generator-v0.23.0/vendor/k8s.io/gengo/examples/set-gen/sets",
+        "//third_party/code-generator-v0.23.0/vendor/k8s.io/gengo/generator",
+        "//third_party/code-generator-v0.23.0/vendor/k8s.io/gengo/namer",
+        "//third_party/code-generator-v0.23.0/vendor/k8s.io/gengo/types",
+        "//third_party/code-generator-v0.23.0/vendor/k8s.io/klog/v2:klog",
+    ],
+)

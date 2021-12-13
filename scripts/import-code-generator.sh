@@ -2,7 +2,7 @@
 set -e
 
 NAME="code-generator"
-VERSION="v0.22.0"
+VERSION="v0.23.0"
 
 TOPDIR=$BUILD_WORKSPACE_DIRECTORY
 TARGETDIR="${TOPDIR}/third_party/${NAME}-${VERSION}"

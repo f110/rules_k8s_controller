@@ -1,0 +1,23 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "compiler",
+    srcs = [
+        "context.go",
+        "error.go",
+        "extensions.go",
+        "helpers.go",
+        "main.go",
+        "reader.go",
+    ],
+    importmap = "k8s.io/code-generator/vendor/github.com/googleapis/gnostic/compiler",
+    importpath = "github.com/googleapis/gnostic/compiler",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//third_party/code-generator-v0.23.0/vendor/github.com/golang/protobuf/proto",
+        "//third_party/code-generator-v0.23.0/vendor/github.com/golang/protobuf/ptypes/any",
+        "//third_party/code-generator-v0.23.0/vendor/github.com/googleapis/gnostic/extensions",
+        "//third_party/code-generator-v0.23.0/vendor/github.com/googleapis/gnostic/jsonschema",
+        "//third_party/code-generator-v0.23.0/vendor/gopkg.in/yaml.v3:yaml_v3",
+    ],
+)
