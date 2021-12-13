@@ -40,7 +40,7 @@ _DEFAULT_K8S_PATCH_VERSION = {
     "v0.22": "v0.22.0",
     "v0.23": "v0.23.0",
 }
-_VENDORED_CONTROLLER_TOOLS_VERSIONS = ["v0.2.4", "v0.2.9", "v0.4.0", "v0.5.0"]
+_VENDORED_CONTROLLER_TOOLS_VERSIONS = ["v0.2.4", "v0.2.9", "v0.4.0", "v0.5.0", "v0.6.2", "v0.7.0"]
 
 def _controller_tools_bin_attrs():
     attrs = {}
