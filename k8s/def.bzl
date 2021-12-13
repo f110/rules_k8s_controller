@@ -30,7 +30,7 @@ _GO_RULE_ATTRS = {
         default = "@io_bazel_rules_go//:go_context_data",
     ),
 }
-_VENDORED_CODE_GENERATOR_VERSIONS = ["v0.22.0", "v0.21.0", "v0.20.4", "v0.19.0", "v0.18.8", "v0.17.11"]
+_VENDORED_CODE_GENERATOR_VERSIONS = ["v0.23.0", "v0.22.0", "v0.21.0", "v0.20.4", "v0.19.0", "v0.18.8", "v0.17.11"]
 _DEFAULT_K8S_PATCH_VERSION = {
     "v0.17": "v0.17.11",
     "v0.18": "v0.18.8",
@@ -38,6 +38,7 @@ _DEFAULT_K8S_PATCH_VERSION = {
     "v0.20": "v0.20.4",
     "v0.21": "v0.21.0",
     "v0.22": "v0.22.0",
+    "v0.23": "v0.23.0",
 }
 _VENDORED_CONTROLLER_TOOLS_VERSIONS = ["v0.2.4", "v0.2.9", "v0.4.0", "v0.5.0"]
 
