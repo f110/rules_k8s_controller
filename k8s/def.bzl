@@ -562,7 +562,7 @@ def k8s_code_generator(name, **kwargs):
         "dir": kwargs["crd"],
         "srcs": kwargs["srcs"],
     }
-    for k in ["controller_tools_versions", "debug"]:
+    for k in ["controller_tools_version", "debug"]:
         if k in kwargs:
             crd_args[k] = kwargs[k]
 
