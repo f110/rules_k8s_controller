@@ -38,7 +38,7 @@ cluster_create = rule(
     executable = True,
     attrs = {
         "cluster_name": attr.string(),
-        "version": attr.string(default = "v1.21.1"),
+        "version": attr.string(default = "v1.23.4"),
         "worker_num": attr.int(default = 1),
         "manifest": attr.label(
             allow_single_file = True,

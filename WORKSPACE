@@ -28,7 +28,7 @@ load("//k8s/kind:def.bzl", "kind_binary")
 
 kind_binary(
     name = "kind",
-    version = "0.10.0",
+    version = "0.12.0",
 )
 
 load("//k8s/kustomize:def.bzl", "kustomize_binary")
