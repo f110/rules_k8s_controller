@@ -2,6 +2,11 @@
 rules_k8s_controller
 =======================
 
+This repository is no longer maintain.
+
+Tools that using code-generator are not suitable for use under the bazel sandbox.
+Therefore, we give up using these tools.
+
 rules_k8s_controller provides the rule for bazel that for code-generator and controller-tools.
 
 Currently supported:
